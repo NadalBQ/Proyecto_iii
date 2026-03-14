@@ -1,0 +1,1 @@
+All the application's modules needed for the project.
