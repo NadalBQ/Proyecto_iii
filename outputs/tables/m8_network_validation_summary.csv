@@ -1,0 +1,14 @@
+metric,value
+node_geometries_valid,TRUE
+edge_geometries_valid,TRUE
+node_geometry_type,POINT
+edge_geometry_type,LINESTRING
+node_crs_epsg,25830
+edge_crs_epsg,25830
+node_ids_unique,TRUE
+edge_ids_unique,TRUE
+edge_endpoints_exist_in_nodes,TRUE
+edge_lengths_positive,TRUE
+routing_backbone_min_ready,TRUE
+matching_contract_documented,TRUE
+traffic_tramo_not_used_as_edge,TRUE
