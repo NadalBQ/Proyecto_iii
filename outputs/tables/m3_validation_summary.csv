@@ -1,0 +1,9 @@
+metric,value
+nrow_tabla_accidente_master,146883
+n_distinct_num_expediente_master,146883
+duplicate_num_expediente_rows_master,0
+master_row_equals_distinct_expediente,TRUE
+master_has_no_duplicate_expedientes,TRUE
+conflict_flag_columns_n,17
+conflict_case_rows,208572
+expedientes_aptos_pca_inicial,146883

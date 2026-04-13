@@ -1,0 +1,16 @@
+metric,value
+accident_master_rows,146883
+accidents_with_valid_coordinates_n,146747
+accidents_with_valid_coordinates_pct,99.91
+accidents_with_sensor_link_n,146872
+accidents_with_sensor_link_pct,99.99
+available_tramo_rows,378
+available_tramo_geometry_pct,100.00
+recommended_spatial_unit,routable_graph_edge
+road_network_edges_exists,FALSE
+tramo_sensor_crosswalk_exists,FALSE
+edge_exposure_exists,FALSE
+blueprint_ready_now,TRUE
+ready_for_real_map_matching,FALSE
+ready_for_edge_historical_score,FALSE
+routing_weight_not_implemented,TRUE

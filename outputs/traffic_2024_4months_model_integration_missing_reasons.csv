@@ -1,0 +1,10 @@
+scope,reason,n,pct
+pilot_unique_accidents,traffic_available,6381,90.41
+pilot_unique_accidents,sensor_not_in_traffic_pilot,468,6.63
+pilot_unique_accidents,edge_missing_from_m9,61,0.86
+pilot_unique_accidents,sensor_and_time_match_not_found,147,2.08
+pilot_unique_accidents,missing_sensor_id,1,0.01
+pilot_model_units,no_traffic_support_sensor_not_in_traffic_pilot,466,6.72
+pilot_model_units,full_traffic_support,6321,91.15
+pilot_model_units,no_traffic_support_sensor_and_time_match_not_found,147,2.12
+pilot_model_units,no_traffic_support_missing_sensor_id,1,0.01

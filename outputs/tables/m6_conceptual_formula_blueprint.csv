@@ -1,0 +1,7 @@
+formula_component,conceptual_expression,purpose,current_status
+bloque_trafico_contexto,"combine_within_block(intensidad, ocupacion)",Representar condicion/contexto de trafico sin duplicar senales vecinas.,baseline_active
+bloque_temporal,"combine_within_block(hour_sin, hour_cos)",Representar el patron horario de manera ciclica y dependiente del tiempo.,baseline_active
+score_baseline,"combine_blocks(bloque_trafico_contexto, bloque_temporal)",Score interpretable de referencia para la logica de riesgo antes de sensibilidades.,baseline_active
+score_con_sensibilidades,"attach_optional_modulators(score_baseline, is_weekend, vmed_review_block)",Escenarios de robustez y pruebas metodologicas sin alterar el nucleo baseline.,sensitivity_only
+bloque_historico_espacial,"combine_segment_history(exposure_adjusted_events, severity, spatial_smoothing)",Puente futuro entre evidencia de accidentes y riesgo operativo por tramo.,future_required
+peso_operativo_arista,"routing_cost(edge, time) <- transform(score_baseline + bloque_historico_espacial + moduladores_validados)","Funcion coste final para routing despues de agregacion por segmento, calibracion y validacion.",not_implemented

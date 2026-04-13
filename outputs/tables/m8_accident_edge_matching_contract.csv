@@ -1,0 +1,34 @@
+contract_section,field_name,data_type,required,description,traceability_rule
+accident_input,num_expediente,character,TRUE,Stable accident identifier at expediente level.,Must come from accident_master and remain unchanged through matching.
+accident_input,accident_x_utm,double,TRUE,Projected x coordinate in EPSG:25830.,Distance calculations are only valid if CRS stays explicit.
+accident_input,accident_y_utm,double,TRUE,Projected y coordinate in EPSG:25830.,Distance calculations are only valid if CRS stays explicit.
+accident_input,accident_crs_epsg,integer,TRUE,Coordinate reference system of the accident point.,Must equal the canonical network CRS before matching.
+accident_input,fecha,date,TRUE,Accident date for later historical aggregation windows.,"Should stay at accident level, not raw row level."
+accident_input,hora,time,TRUE,Accident time for future temporal bucketing.,Should remain attached to the matched edge record.
+accident_input,tipo_accidente,character,FALSE,Accident type retained for downstream descriptive summaries.,"Not required to compute distance, but useful in later aggregation."
+edge_input,edge_id,character,TRUE,Stable canonical edge identifier.,Primary edge key; never substitute with sensor or tramo ids.
+edge_input,from_node_id,character,TRUE,Origin node of the edge geometry orientation.,Must exist in the canonical nodes table.
+edge_input,to_node_id,character,TRUE,Destination node of the edge geometry orientation.,Must exist in the canonical nodes table.
+edge_input,edge_length_m,double,TRUE,Edge length in meters in the canonical CRS.,Should be recomputable from geometry if needed.
+edge_input,geometry,LINESTRING,TRUE,Canonical edge geometry in EPSG:25830.,Distance to accident is always traced against this geometry.
+edge_input,source_osm_id,character,TRUE,Original OSM feature id behind the canonical segment.,Preserves provenance after segmentation.
+edge_input,road_class,character,FALSE,Geofabrik road class retained for filtering and later routing logic.,Auxiliary context; not a substitute for edge_id.
+matching_output,match_status,character,TRUE,Binary match status: matched / unmatched.,Ambiguity does not create a third status; it is reflected through quality_flag and tie diagnostics.
+matching_output,edge_id,character,TRUE,Chosen canonical edge for the accident.,"Primary matched-edge field; must reference canonical edge_id, never tramo or sensor ids."
+matching_output,candidate_edges_n,integer,TRUE,Number of candidate edges evaluated inside the search radius.,Useful to detect ambiguous local geometry.
+matching_output,search_radius_m,double,TRUE,Radius used to look for candidate edges around the accident point.,Must be stored to reproduce the matching decision.
+matching_output,distance_accident_to_edge_m,double,TRUE,Shortest point-to-line distance from accident to matched edge.,Primary geometric traceability metric.
+matching_output,distance_to_from_node_m,double,FALSE,Distance along the matched edge from the projected point to the start node.,Useful to inspect projection position along the edge.
+matching_output,distance_to_to_node_m,double,FALSE,Distance along the matched edge from the projected point to the end node.,Useful to inspect projection position along the edge.
+matching_output,projection_fraction_0_1,double,FALSE,Relative position of the projected point along the edge geometry.,Useful to reproduce where along the edge the accident fell.
+matching_output,projected_point_geometry,character,FALSE,Projected point geometry stored as WKT in the CSV output.,Supports spatial QA of the matching output; the GeoJSON also stores the projected geometry as real geometry.
+matching_output,matching_method,character,TRUE,"Method identifier used in M9, e.g. nearest_edge_projected.",Needed for auditability if the matching logic changes later.
+matching_output,quality_flag,character,TRUE,Match quality label: high_confidence / medium_confidence / low_confidence / unmatched.,"Ambiguity is reflected here, not in match_status."
+matching_output,tie_candidate_count,integer,FALSE,Number of candidates within the tie tolerance of the minimum distance.,Useful to trace ambiguous local geometry around the selected edge.
+matching_output,match_decision_rule,character,FALSE,Deterministic rule used to choose the final edge among candidates.,Documents whether the match was resolved by min distance only or by tie-breaking.
+matching_output,candidate_top3_edge_ids,character,FALSE,Top candidate edge ids ordered by selection priority.,Compact audit trail for near alternatives.
+matching_output,candidate_top3_distances_m,character,FALSE,Top candidate distances in meters ordered by selection priority.,Compact audit trail for near alternatives.
+matching_output,unmatched_reason,character,FALSE,Reason for unmatched status.,"Makes invalid coordinates, outside envelope and no-candidate cases explicit."
+matching_output,outside_operational_envelope,logical,FALSE,Whether the accident lies outside the canonical network operational envelope.,Supports explicit reporting of envelope coverage.
+matching_output,nearest_edge_id_any,character,FALSE,Nearest canonical edge even when the accident remains unmatched.,Diagnostic only; never treated as a successful match.
+matching_output,nearest_distance_any_m,double,FALSE,Distance to the nearest canonical edge for unmatched cases.,Diagnostic only; useful to inspect misses near the envelope or search radius.

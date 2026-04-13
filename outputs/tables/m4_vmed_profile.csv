@@ -1,0 +1,2 @@
+variable,n,missing_n,missing_pct,unique_n,zero_pct,negative_pct,positive_pct,mean,sd,min,p50,p95,p99,max,recommendation,rationale
+vmed,146883,29068,19.78990080540294,478,92.68429317149769,0.004243941773118873,7.311462886729195,4.714183253405763,17.416240431330447,-127,0,59.75,81.73833333333339,117.5,sensitivity,Known noisy variable with heavy zero inflation and small negative tail; retain only for sensitivity analyses.

@@ -1,0 +1,19 @@
+summary_scope,summary_key,value,notes
+category,usable_now_dynamic_exogenous,1,Source count in this readiness bucket.
+category,usable_with_processing,1,Source count in this readiness bucket.
+category,not_usable_now,3,Source count in this readiness bucket.
+category,unsafe_due_to_leakage,3,Source count in this readiness bucket.
+overall,new_true_dynamic_source_usable_now,False,No new true dynamic exogenous feed in the repo is currently edge-ready and leak-safe.
+overall,calendar_already_integrated_only,True,Deterministic calendar exists and is already in the model; it is not the missing richer dynamic source.
+overall,best_candidate_source_type,traffic,Traffic remains the best next source type if a real Madrid historical feed becomes available.
+overall,leak_safe_dynamic_integration_feasible_now,False,"Feasible blueprint exists, but not with the current repo-only sources."
+overall,future_a5_b5_justified_now,False,A5/B5 should wait for actual dynamic exogenous ingestion beyond the already integrated calendar.
+overall,training_table_with_true_dynamic_exogenous_features_created,False,No parquet created because no true dynamic exogenous source is operational now.
+source,deterministic_panel_calendar,usable_now_dynamic_exogenous,already integrated; does not solve the richer dynamic-exogenous gap
+source,municipal_traffic_tramos_csv,not_usable_now,wrong geography plus no usable historical time series plus no edge alignment
+source,geofabrik_osm_traffic_layers,usable_with_processing,not dynamic by nature; would only support richer static context after geospatial joins
+source,standalone_weather_feed,not_usable_now,missing source
+source,event_calendar_feed,not_usable_now,missing source
+source,m11_edge_sensor_crosswalk,unsafe_due_to_leakage,accident-backed construction
+source,m11_historical_exposure_adjusted,unsafe_due_to_leakage,target-derived historical score
+source,m12_edge_context_dynamic_base,unsafe_due_to_leakage,full-period accident-backed aggregation

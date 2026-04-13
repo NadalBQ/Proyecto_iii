@@ -1,0 +1,5 @@
+set_name,variables,complete_cases_n,complete_cases_pct,dropped_n,dropped_pct,methodological_comment
+main_continuous,"intensidad, ocupacion, hour_sin, hour_cos",120195,81.83043646984335,26688,18.169563530156655,Preferred baseline set: continuous/contextual block without binary calendar indicators and without vmed.
+with_vmed,"intensidad, ocupacion, hour_sin, hour_cos, vmed",117785,80.18967477516118,29098,19.810325224838817,"Sensitivity set: tests whether vmed changes structure, but vmed remains under review and should not define the main PCA specification."
+with_binary_calendar,"intensidad, ocupacion, hour_sin, hour_cos, es_festivo, is_weekend",120195,81.83043646984335,26688,18.169563530156655,Calendar sensitivity set: adds binary indicators for exploratory stress-testing; interpretability is weaker than the main continuous block.
+full_candidate,"intensidad, ocupacion, hour_sin, hour_cos, es_festivo, is_weekend, vmed",117785,80.18967477516118,29098,19.810325224838817,"High-risk candidate set because it includes excluded variables (es_festivo) plus sensitivity variables (is_weekend, vmed). Use only to inspect robustness, not as the preferred PCA input."

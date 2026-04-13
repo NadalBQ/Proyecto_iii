@@ -1,0 +1,5 @@
+metric,value
+nrow_raw,311199
+exact_duplicate_rows,46964
+exact_duplicate_rate,0.15091308134023568
+nrow_after_exact_dedup,264235

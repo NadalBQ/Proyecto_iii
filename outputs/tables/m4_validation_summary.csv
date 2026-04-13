@@ -1,0 +1,12 @@
+metric,value
+screening_source,tabla_accidente_master filtered by pca_initial_eligible
+screening_n,146883
+pca_base_n,146883
+screening_n_matches_pca_base,TRUE
+screening_id_matches_pca_base,TRUE
+candidate_variables_screened,7
+pca_sets_screened,4
+vmed_recommendation,sensitivity
+main_set_complete_cases_n,120195
+main_set_complete_cases_pct,81.8304364698433
+temporal_warning_variables_n,2

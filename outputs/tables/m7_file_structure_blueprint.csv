@@ -1,0 +1,11 @@
+path_blueprint,path_role,status_now,notes
+R/07_historico_espacial_blueprint.R,current_blueprint_module,implemented_now,Profiles current spatial readiness and writes M7 blueprint outputs.
+R/08_preparacion_red_viaria.R,future_network_preparation_module,planned,Will ingest and normalize the canonical routable road network.
+R/09_mapmatching_accidente_arista.R,future_matching_module,planned,Will assign each accident point to a graph edge with diagnostics.
+R/10_agregacion_historica_aristas.R,future_historical_aggregation_module,planned,Will aggregate matched accidents by edge and time window.
+R/11_score_historico_aristas.R,future_historical_score_module,planned,Will build the historical-spatial block before any graph cost transformation.
+bases de datos/network/,future_input_directory,missing_now,Recommended location for the canonical road network inputs.
+bases de datos/crosswalks/,future_input_directory,missing_now,Recommended location for tramo/sensor to edge bridge tables.
+bases de datos/exposure/,future_input_directory,missing_now,Recommended location for edge-level exposure or denominator inputs.
+outputs/data/,current_output_directory,already_exists,Recommended location for future spatial intermediate datasets with m7_* prefixes.
+outputs/tables/,current_output_directory,already_exists,Recommended location for M7 validation tables and blueprint registries.

@@ -1,0 +1,6 @@
+summary_name,scope,n,mean,p50,p95,p99,max,density_cap_p95_used,output_schema_version
+accident_count_raw,non_zero_if_available,55867,2.409,1,7,16,365,174.142,m10_schema_v1_full_network_weighted_density_prelim_score
+accident_count_weighted_by_quality,non_zero_if_available,55867,1.108,0.4,3.4,7.7,365,174.142,m10_schema_v1_full_network_weighted_density_prelim_score
+accidents_per_km_raw,non_zero_if_available,55867,135.257,75.766,430.118,901.25,49744.617,174.142,m10_schema_v1_full_network_weighted_density_prelim_score
+accidents_per_km,non_zero_if_available,55867,55.913,32.17,174.142,363.108,19897.847,174.142,m10_schema_v1_full_network_weighted_density_prelim_score
+historical_score_prelim,non_zero_if_available,55867,27.814,18.473,99.997,100,100,174.142,m10_schema_v1_full_network_weighted_density_prelim_score

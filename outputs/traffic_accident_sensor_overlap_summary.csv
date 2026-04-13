@@ -1,0 +1,13 @@
+"metric","value"
+"accident_rows_total",311199
+"accident_rows_with_sensor_id",311199
+"accident_unique_sensors",4763
+"official_unique_sensors",5070
+"traffic_panel_unique_sensors",4753
+"aggregated_unique_sensors",4753
+"accident_sensor_overlap_with_official_n",4566
+"accident_sensor_overlap_with_official_pct",95.86
+"accident_sensor_overlap_with_traffic_4months_n",4403
+"accident_sensor_overlap_with_traffic_4months_pct",92.44
+"accident_sensor_overlap_with_aggregated_n",4403
+"accident_sensor_overlap_with_aggregated_pct",92.44

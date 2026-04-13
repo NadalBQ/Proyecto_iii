@@ -1,0 +1,15 @@
+metric,value
+network_edges_n,363700
+edges_with_at_least_one_accident_n,55867
+edges_with_at_least_one_accident_pct,15.36
+edges_without_accident_n,307833
+matched_accidents_used_n,134565
+matched_accidents_used_pct_over_total_accidents,91.61
+excluded_unmatched_n,12318
+excluded_unmatched_pct_over_total_accidents,8.39
+outside_operational_envelope_n,7835
+outside_operational_envelope_pct_over_total_accidents,5.33
+accident_count_raw_p50_nonzero,1.000
+accident_count_raw_p95_nonzero,7.000
+accidents_per_km_p50_nonzero,32.170
+accidents_per_km_p95_nonzero,174.142

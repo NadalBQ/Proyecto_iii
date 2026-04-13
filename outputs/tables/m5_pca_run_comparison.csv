@@ -1,0 +1,6 @@
+question,answer,evidence
+intensidad_y_ocupacion_mismo_bloque,"Sí, forman un bloque compartido en la corrida baseline_recent y siguen anclando la misma subestructura en las sensibilidades.","baseline_recent: contribuciones PC1/PC2 -> intensidad (32.929, 7.042), ocupacion (33.757, 5.801)."
+hour_sin_y_hour_cos_eje_temporal_claro,"Sí, hour_sin y hour_cos estructuran el subespacio temporal del plano principal, aunque no deben leerse como una sola variable lineal.","baseline_recent: contribuciones PC1/PC2 -> hour_sin (0.116, 66.078), hour_cos (33.198, 21.079)."
+cambio_al_anadir_vmed,El cambio al añadir vmed es material; refuerza que vmed no debe entrar en el baseline.,mean_abs_diff vs baseline_recent = 0.271; variance PC1+PC2 pasa de 61.75% a 55.09%; contribucion de vmed en PC1/PC2 = 37.560 / 5.377.
+cambio_al_anadir_is_weekend,"El cambio al añadir is_weekend es pequeño; sirve como sensibilidad, pero no reconfigura el bloque principal.",mean_abs_diff vs baseline_recent = 0.076; variance PC1+PC2 pasa de 61.75% a 52.16%; contribucion de is_weekend en PC1/PC2 = 22.972 / 1.302.
+diferencia_periodo_completo_vs_reciente,"La estructura del periodo completo se parece mucho a la reciente, aunque se mantiene la preferencia metodologica por el tramo 2020-2024.",mean_abs_diff baseline_recent vs baseline_full_period = 0.060; variance PC1+PC2 pasa de 61.75% a 61.85%.

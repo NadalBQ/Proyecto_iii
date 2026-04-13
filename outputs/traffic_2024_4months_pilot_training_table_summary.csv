@@ -1,0 +1,15 @@
+metric,value
+pilot_training_rows_total,298416
+pilot_training_positive_rows,6935
+pilot_training_zero_rows,291481
+pilot_training_zero_rows_pct,97.68
+pilot_training_edges,6217
+pilot_training_time_cells,48
+pilot_training_rows_with_traffic,268903
+pilot_training_rows_with_traffic_pct,90.11
+pilot_training_rows_without_traffic,29513
+pilot_training_rows_without_traffic_pct,9.89
+pilot_training_positive_rows_with_traffic,6334
+pilot_training_positive_rows_with_traffic_pct,91.33
+pilot_training_zero_rows_with_traffic,262569
+pilot_training_zero_rows_with_traffic_pct,90.08

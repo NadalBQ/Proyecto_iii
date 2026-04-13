@@ -1,0 +1,50 @@
+# System / editor
+desktop.ini
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# R / local session files
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+*.rds
+*.log
+*.tmp
+
+# Raw and external data
+data/raw/
+bases de datos/
+
+# Heavy processed data
+data/processed/
+
+# Heavy generated outputs
+outputs/data/
+outputs/plots/
+outputs/modeling/data/
+outputs/modeling/*.parquet
+outputs/modeling/*predictions*.csv
+outputs/modeling/global_scoring_output_prelim.csv
+outputs/*predictions*.csv
+
+# Selected heavy table outputs that are regenerable
+outputs/tables/m2_expediente_counts.csv
+outputs/tables/m3_conflict_cases.csv
+outputs/tables/m5_*_scores.csv
+
+# Rendered / auxiliary docs not needed in the shared repo
+road_safety_analisis_pca.html
+Guia_OSMnx.docx
+Project Offers - ALL.pdf
+MEMORIAS/

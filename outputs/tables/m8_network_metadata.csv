@@ -1,0 +1,35 @@
+metric,value
+network_source,Geofabrik OpenStreetMap roads extract for Madrid
+source_distribution_url,https://download.geofabrik.de/europe/spain/madrid-latest-free.shp.zip
+source_zip_path,C:/Users/Usuario/OneDrive/Desktop/legleye/tercero/2cuatri/proyecto/bases de datos/network/madrid-latest-free.shp.zip
+source_layer,gis_osm_roads_free_1
+source_extract_crs_epsg,4326
+canonical_network_crs_epsg,25830
+assumed_accident_crs_epsg,25830
+bbox_strategy,quantile_0.050_0.999_plus_1000m_buffer
+accident_valid_coordinates_n,146747
+accident_inlier_coordinates_n,137743
+query_bbox_ll_xmin,-3.789133
+query_bbox_ll_ymin,40.068753
+query_bbox_ll_xmax,-3.535916
+query_bbox_ll_ymax,40.527783
+query_bbox_utm_xmin,433150.661
+query_bbox_utm_ymin,4435673.843
+query_bbox_utm_xmax,454307.049
+query_bbox_utm_ymax,4486484.666
+roads_source_features_n,382921
+roads_filtered_features_n,177234
+roads_clipped_features_n,73188
+network_nodes_n,330521
+network_edges_n,363700
+total_edge_length_m,9213799.420
+node_bbox_utm_xmin,433150.661
+node_bbox_utm_ymin,4435673.843
+node_bbox_utm_xmax,454307.049
+node_bbox_utm_ymax,4486484.666
+edge_bbox_utm_xmin,433150.661
+edge_bbox_utm_ymin,4435673.843
+edge_bbox_utm_xmax,454307.049
+edge_bbox_utm_ymax,4486484.666
+traffic_tramo_used_as_canonical_edge,FALSE
+matching_output_schema_version,m9_schema_v1_edge_id_projected_point_geometry_binary_match_status

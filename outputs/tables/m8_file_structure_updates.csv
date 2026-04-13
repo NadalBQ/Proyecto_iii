@@ -1,0 +1,10 @@
+path_blueprint,role_in_pipeline,status_after_m8,notes
+R/08_preparacion_red_canonica.R,current_network_backbone_builder,implemented_now,Builds the canonical OSM road network backbone and the matching data contract.
+C:/Users/Usuario/OneDrive/Desktop/legleye/tercero/2cuatri/proyecto/bases de datos/network/madrid-latest-free.shp.zip,canonical_source_distribution,implemented_now,Cached Geofabrik source zip used to regenerate the canonical network when needed.
+C:/Users/Usuario/OneDrive/Desktop/legleye/tercero/2cuatri/proyecto/bases de datos/network/madrid-latest-free-shp/gis_osm_roads_free_1.shp,canonical_source_layer,implemented_now,Geofabrik roads layer retained as the raw source for canonical edge preparation.
+outputs/data/m8_road_network_nodes.geojson,canonical_nodes_geometry,implemented_now,Projected node geometry layer in EPSG:25830.
+outputs/data/m8_road_network_edges.geojson,canonical_edges_geometry,implemented_now,Projected edge geometry layer in EPSG:25830 with stable edge ids.
+outputs/tables/m8_accident_edge_matching_contract.csv,matching_contract,implemented_now,Documents the minimum fields and quality metrics for M9 matching.
+R/09_accidente_edge_matching.R,future_matching_module,planned_for_m9,Will perform the real accident to edge assignment using the canonical network built in M8.
+R/10_agregacion_historica_edge.R,future_historical_aggregation_module,planned_for_m9_or_m10,Will aggregate matched accidents by edge and time window.
+outputs/data/m9_accident_edge_matches.csv,future_matching_output,planned,Will store audited matching outputs with distance metrics and quality flags.

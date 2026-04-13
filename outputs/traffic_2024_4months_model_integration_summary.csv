@@ -1,0 +1,17 @@
+metric,value
+full_joined_dataset_rows,311199
+pilot_period_rows_raw,25382
+pilot_period_rows_raw_pct_of_full_joined,8.16
+pilot_period_unique_accidents,7058
+pilot_period_unique_accidents_edge_linked,6997
+pilot_period_unique_accidents_edge_linked_pct,99.14
+pilot_period_unique_accidents_edge_missing,61
+pilot_unit_rows_total,6935
+pilot_unit_rows_with_traffic_coverage,6321
+pilot_unit_rows_with_traffic_coverage_pct,91.15
+pilot_unit_rows_without_traffic_coverage,614
+pilot_unit_rows_without_traffic_coverage_pct,8.85
+m9_duplicate_num_expediente_surplus_rows,0
+m10_header_found,1
+m11_header_found,1
+m12_header_found,1

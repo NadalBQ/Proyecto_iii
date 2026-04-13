@@ -1,0 +1,9 @@
+column_name,missing_n,non_missing_n,class
+num_expediente,0,311199,character
+fecha,0,311199,Date
+hora,0,311199,hms|difftime
+dia_semana,0,311199,character
+es_festivo,0,311199,numeric
+intensidad,49392,261807,numeric
+ocupacion,49574,261625,numeric
+vmed,53934,257265,numeric

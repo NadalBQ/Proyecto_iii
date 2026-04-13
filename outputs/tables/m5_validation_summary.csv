@@ -1,0 +1,7 @@
+metric,value
+recent_comparable_period,2020-2024
+runs_executed,4
+baseline_recent_n,79088
+baseline_full_period_n,120195
+with_vmed_recent_n,79066
+with_weekend_recent_n,79088

@@ -1,0 +1,11 @@
+scope,traffic_join_status,traffic_missing_reason,row_count,row_pct
+overall_dataset,not_matched,outside_traffic_pilot_period,285817,91.84
+overall_dataset,matched,matched,24247,7.79
+overall_dataset,not_matched,sensor_not_in_traffic_pilot,868,0.28
+overall_dataset,not_matched,sensor_and_time_match_not_found,265,0.09
+overall_dataset,not_matched,missing_sensor_id,2,0
+within_pilot_period,matched,matched,24247,95.53
+within_pilot_period,not_matched,sensor_not_in_traffic_pilot,868,3.42
+within_pilot_period,not_matched,sensor_and_time_match_not_found,265,1.04
+within_pilot_period,not_matched,missing_sensor_id,2,0.01
+outside_pilot_period,not_matched,outside_traffic_pilot_period,285817,100

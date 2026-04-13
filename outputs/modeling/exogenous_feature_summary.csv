@@ -1,0 +1,36 @@
+feature_name,source,granularity,temporal_scope,rows_n,coverage_n,coverage_pct,missing_n,missing_pct,unique_n,mean_nonmissing,p50_nonmissing,p95_nonmissing,min_nonmissing,max_nonmissing
+exog_bridge_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.010295245328431535,0.0,0.0,0.0,1.0
+exog_distance_from_network_centroid_km,road_network_geometry,edge,static,3270636,3270636,100.0,0,0.0,111597,8.237793014319346,7.195656985439182,19.494969514309837,0.022973937004738588,36.625083012919646
+exog_edge_between_intersections_flag,road_network_nodes,edge,static,3270636,3270636,100.0,0,0.0,2,0.10846330805384641,0.0,1.0,0.0,1.0
+exog_edge_touches_dead_end_flag,road_network_nodes,edge,static,3270636,3270636,100.0,0,0.0,2,0.01565933965137056,0.0,0.0,0.0,1.0
+exog_edge_touches_intersection_flag,road_network_nodes,edge,static,3270636,3270636,100.0,0,0.0,2,0.5468954662029036,1.0,1.0,0.0,1.0
+exog_from_node_degree,road_network_nodes,edge,static,3270636,3270636,100.0,0,0.0,7,2.422457283537514,2.0,4.0,1.0,12.0
+exog_has_road_ref_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.08916430932699328,0.0,1.0,0.0,1.0
+exog_has_street_name_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.8177235253326876,1.0,1.0,0.0,1.0
+exog_layer_abs,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,4,0.030434447612024084,0.0,0.0,0.0,3.0
+exog_maxspeed_ge70_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.05402252039052955,0.0,1.0,0.0,1.0
+exog_maxspeed_kph,road_network_edges,edge,static,3270636,1605096,49.07595953814487,1665540,50.92404046185513,13,47.01072085407976,50.0,90.0,5.0,120.0
+exog_maxspeed_kph_imputed_by_road_class,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,13,42.0905291814803,40.0,70.0,5.0,120.0
+exog_maxspeed_le30_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.45012162772011316,0.0,1.0,0.0,1.0
+exog_maxspeed_missing_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.5092404046185512,1.0,1.0,0.0,1.0
+exog_node_degree_max,road_network_nodes,edge,static,3270636,3270636,100.0,0,0.0,7,2.726167020726244,3.0,4.0,1.0,12.0
+exog_node_degree_mean,road_network_nodes,edge,static,3270636,3270636,100.0,0,0.0,11,2.4172601292225733,2.5,3.5,1.0,7.0
+exog_node_degree_min,road_network_nodes,edge,static,3270636,3270636,100.0,0,0.0,5,2.1083532377189025,2.0,3.0,1.0,5.0
+exog_nonzero_layer_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.024193459620697626,0.0,0.0,0.0,1.0
+exog_oneway_code_b_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.3506473970200291,0.0,1.0,0.0,1.0
+exog_oneway_code_t_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.00015042945775683997,0.0,0.0,0.0,1.0
+exog_orientation_cos,road_network_geometry,edge,static,3270636,3270636,100.0,0,0.0,111597,0.01876166038424465,0.01604325990942262,0.9961847314561642,-0.9999999999791357,0.9999999999769095
+exog_orientation_sin,road_network_geometry,edge,static,3270636,3270636,100.0,0,0.0,111597,0.0015369888871009127,-0.0008004370853687083,0.9948998374663806,-0.9999999999747458,0.9999999996484905
+exog_road_class_hierarchy_score,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,8,4.1255498930483245,4.0,7.0,1.0,8.0
+exog_road_class_is_link_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.047843905589004705,0.0,0.0,0.0,1.0
+exog_road_class_is_local_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.6543204440971114,1.0,1.0,0.0,1.0
+exog_road_class_is_major_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.23393248285654533,0.0,1.0,0.0,1.0
+exog_source_way_mean_segment_length_m,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,44408,32.41341768334231,26.537543919471563,80.725875985516,0.1785678170406285,1008.6215516125388
+exog_source_way_segment_count,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,88,9.907970192953297,7.0,28.0,1.0,145.0
+exog_source_way_total_length_m,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,44408,295.7311737446008,186.69989940656853,872.7891548004903,0.6799195206181031,8715.216775895298
+exog_to_node_degree,road_network_nodes,edge,static,3270636,3270636,100.0,0,0.0,7,2.4120629749076326,2.0,4.0,1.0,12.0
+exog_tunnel_flag,road_network_edges,edge,static,3270636,3270636,100.0,0,0.0,2,0.013920228359254896,0.0,0.0,0.0,1.0
+exog_temporal_is_night_flag,panel_calendar,edge + temporal_bin_4h + is_weekend,temporal,3270636,3270636,100.0,0,0.0,2,0.3333333333333333,0.0,1.0,0.0,1.0
+exog_temporal_is_peak_commute_flag,panel_calendar,edge + temporal_bin_4h + is_weekend,temporal,3270636,3270636,100.0,0,0.0,2,0.3333333333333333,0.0,1.0,0.0,1.0
+exog_temporal_is_weekday_peak_flag,panel_calendar,edge + temporal_bin_4h + is_weekend,temporal,3270636,3270636,100.0,0,0.0,2,0.16666666666666666,0.0,1.0,0.0,1.0
+exog_temporal_is_weekend_night_flag,panel_calendar,edge + temporal_bin_4h + is_weekend,temporal,3270636,3270636,100.0,0,0.0,2,0.16666666666666666,0.0,1.0,0.0,1.0

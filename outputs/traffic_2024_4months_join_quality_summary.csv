@@ -1,0 +1,17 @@
+metric,value
+accident_rows_total,311199
+accident_rows_after_left_join,311199
+row_loss_n,0
+row_loss_pct,0
+traffic_duplicate_key_surplus_rows,0
+parse_success_rows,311199
+parse_success_pct,100
+pilot_period_rows,25382
+pilot_period_rows_pct,8.16
+outside_pilot_period_rows,285817
+outside_pilot_period_rows_pct,91.84
+matched_rows_global,24247
+matched_rows_global_pct,7.79
+matched_rows_within_pilot_period,24247
+matched_rows_within_pilot_period_pct,95.53
+model_ready_rows,25382

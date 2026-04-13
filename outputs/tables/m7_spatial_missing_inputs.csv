@@ -1,0 +1,5 @@
+input_name,relative_path,input_group,role_in_pipeline,geometry_or_structure,notes
+road_network_edges,bases de datos/network/road_network_edges.geojson,future_required,canonical_routable_edge_layer,edge_geometry_layer,Required future input: drivable graph edges in a canonical CRS.
+road_network_nodes,bases de datos/network/road_network_nodes.geojson,future_required,canonical_routable_node_layer,node_geometry_layer,Required future input: graph nodes aligned with the canonical edge layer.
+tramo_sensor_to_edge_crosswalk,bases de datos/crosswalks/tramo_sensor_to_edge_crosswalk.csv,future_required,bridge_between_context_layers_and_edges,tabular_crosswalk,Required if traffic tramos or sensors are used to enrich graph edges.
+edge_exposure_baseline,bases de datos/exposure/edge_exposure_baseline.csv,future_required,exposure_or_denominator_source,tabular_edge_metrics,Required before any historical edge score is turned into a defensible normalized risk signal.

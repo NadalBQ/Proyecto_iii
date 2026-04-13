@@ -1,0 +1,771 @@
+---
+title: "ROAD-SAFETY - Analisis PCA y blueprint preliminar del indice"
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    number_sections: true
+    df_print: paged
+    theme: flatly
+    css: road_safety_report.css
+---
+
+```{r setup, include=FALSE}
+required_packages <- c("readr", "dplyr", "tibble", "ggplot2", "knitr", "scales")
+missing_packages <- required_packages[!vapply(required_packages, requireNamespace, logical(1), quietly = TRUE)]
+
+if (length(missing_packages) > 0L) {
+  stop(
+    sprintf(
+      "Faltan paquetes requeridos para renderizar este informe: %s",
+      paste(missing_packages, collapse = ", ")
+    ),
+    call. = FALSE
+  )
+}
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center",
+  fig.width = 9.5,
+  fig.height = 5.6,
+  dpi = 144,
+  out.width = "100%"
+)
+
+rmd_input <- knitr::current_input(dir = TRUE)
+project_dir <- if (nzchar(rmd_input)) {
+  dirname(normalizePath(rmd_input, winslash = "/", mustWork = TRUE))
+} else {
+  normalizePath(getwd(), winslash = "/", mustWork = TRUE)
+}
+knitr::opts_knit$set(root.dir = project_dir)
+
+build_path <- function(...) file.path(...)
+
+table_paths <- list(
+  m2_exact_duplicate_summary = build_path("outputs", "tables", "m2_exact_duplicate_summary.csv"),
+  m2_expediente_summary = build_path("outputs", "tables", "m2_expediente_summary.csv"),
+  m2_expediente_distribution_raw = build_path("outputs", "tables", "m2_expediente_distribution_raw.csv"),
+  m2_expediente_distribution_after_exact_dedup = build_path("outputs", "tables", "m2_expediente_distribution_after_exact_dedup.csv"),
+  m3_conflict_report = build_path("outputs", "tables", "m3_conflict_report.csv"),
+  m3_conflict_cases = build_path("outputs", "tables", "m3_conflict_cases.csv"),
+  m3_variable_consistency_summary = build_path("outputs", "tables", "m3_variable_consistency_summary.csv"),
+  m3_validation_summary = build_path("outputs", "tables", "m3_validation_summary.csv"),
+  m4_candidate_variable_screening = build_path("outputs", "tables", "m4_candidate_variable_screening.csv"),
+  m4_pca_set_screening = build_path("outputs", "tables", "m4_pca_set_screening.csv"),
+  m4_vmed_profile = build_path("outputs", "tables", "m4_vmed_profile.csv"),
+  m4_temporal_comparability_overview = build_path("outputs", "tables", "m4_temporal_comparability_overview.csv"),
+  m4_continuous_correlation_matrix = build_path("outputs", "tables", "m4_continuous_correlation_matrix.csv"),
+  m5_pca_run_summary = build_path("outputs", "tables", "m5_pca_run_summary.csv"),
+  m5_pca_run_comparison = build_path("outputs", "tables", "m5_pca_run_comparison.csv"),
+  m5_road_safety_note = build_path("outputs", "tables", "m5_road_safety_note.md"),
+  m6_index_blueprint = build_path("outputs", "tables", "m6_index_blueprint.csv"),
+  m6_final_variable_status = build_path("outputs", "tables", "m6_final_variable_status.csv"),
+  m6_conceptual_formula_blueprint = build_path("outputs", "tables", "m6_conceptual_formula_blueprint.csv"),
+  m6_risk_index_blueprint = build_path("outputs", "tables", "m6_risk_index_blueprint.md")
+)
+
+plot_paths <- list(
+  m4_candidate_missing_pct = build_path("outputs", "plots", "m4_candidate_missing_pct.png"),
+  m4_pca_set_complete_cases_pct = build_path("outputs", "plots", "m4_pca_set_complete_cases_pct.png"),
+  m4_continuous_correlation_heatmap = build_path("outputs", "plots", "m4_continuous_correlation_heatmap.png"),
+  m4_vmed_distribution = build_path("outputs", "plots", "m4_vmed_distribution.png"),
+  m4_yearly_missing_pct_candidates = build_path("outputs", "plots", "m4_yearly_missing_pct_candidates.png"),
+  m5_baseline_recent_scree_plot = build_path("outputs", "plots", "m5_baseline_recent_scree_plot.png"),
+  m5_baseline_recent_correlation_circle = build_path("outputs", "plots", "m5_baseline_recent_correlation_circle.png"),
+  m5_baseline_recent_biplot = build_path("outputs", "plots", "m5_baseline_recent_biplot.png"),
+  m5_baseline_full_period_scree_plot = build_path("outputs", "plots", "m5_baseline_full_period_scree_plot.png"),
+  m5_baseline_full_period_correlation_circle = build_path("outputs", "plots", "m5_baseline_full_period_correlation_circle.png"),
+  m5_baseline_full_period_biplot = build_path("outputs", "plots", "m5_baseline_full_period_biplot.png"),
+  m5_with_vmed_recent_scree_plot = build_path("outputs", "plots", "m5_with_vmed_recent_scree_plot.png"),
+  m5_with_vmed_recent_correlation_circle = build_path("outputs", "plots", "m5_with_vmed_recent_correlation_circle.png"),
+  m5_with_vmed_recent_biplot = build_path("outputs", "plots", "m5_with_vmed_recent_biplot.png"),
+  m5_with_weekend_recent_scree_plot = build_path("outputs", "plots", "m5_with_weekend_recent_scree_plot.png"),
+  m5_with_weekend_recent_correlation_circle = build_path("outputs", "plots", "m5_with_weekend_recent_correlation_circle.png"),
+  m5_with_weekend_recent_biplot = build_path("outputs", "plots", "m5_with_weekend_recent_biplot.png")
+)
+
+read_csv_safe <- function(path) {
+  if (!file.exists(path)) return(NULL)
+  readr::read_csv(path, show_col_types = FALSE, progress = FALSE)
+}
+
+read_text_safe <- function(path) {
+  if (!file.exists(path)) return(NULL)
+  paste(readLines(path, warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+}
+
+render_callout <- function(title, body, tone = "key") {
+  knitr::asis_output(
+    sprintf(
+      "<div class='callout-card %s'>\n<div class='callout-title'>%s</div>\n<div class='callout-body'>%s</div>\n</div>",
+      tone, title, body
+    )
+  )
+}
+
+render_metric_cards <- function(labels, values, subtitles = NULL) {
+  if (is.null(subtitles)) subtitles <- rep("", length(labels))
+  cards <- Map(
+    function(label, value, subtitle) {
+      sprintf(
+        "<div class='metric-card'><div class='metric-label'>%s</div><div class='metric-value'>%s</div><div class='metric-note'>%s</div></div>",
+        label, value, subtitle
+      )
+    },
+    labels, values, subtitles
+  )
+  knitr::asis_output(paste0("<div class='metric-grid'>", paste(cards, collapse = ""), "</div>"))
+}
+
+render_missing_notice <- function(paths) {
+  missing <- paths[!file.exists(paths)]
+  if (length(missing) == 0L) return(knitr::asis_output(""))
+  items <- paste0("<li><code>", missing, "</code></li>", collapse = "")
+  render_callout(
+    "Artefactos no disponibles",
+    paste0("Faltan algunos outputs esperados para esta seccion.<ul>", items, "</ul>"),
+    tone = "warning"
+  )
+}
+
+render_plot_safe <- function(path) {
+  if (!file.exists(path)) {
+    return(render_callout("Grafico no disponible", paste0("<code>", path, "</code>"), tone = "warning"))
+  }
+  knitr::include_graphics(path)
+}
+
+kable_safe <- function(df, caption = NULL, n = NULL, digits = NULL) {
+  if (is.null(df)) {
+    return(knitr::asis_output("> Tabla no disponible porque falta el artefacto esperado.\n"))
+  }
+  if (!is.null(n)) df <- utils::head(df, n)
+  if (is.null(digits)) return(knitr::kable(df, caption = caption))
+  knitr::kable(df, caption = caption, digits = digits)
+}
+
+fmt_int <- function(x) ifelse(is.na(x), "NA", scales::comma(x, accuracy = 1, big.mark = ".", decimal.mark = ","))
+fmt_pct <- function(x, digits = 1) ifelse(is.na(x), "NA", paste0(formatC(x, digits = digits, format = "f", decimal.mark = ","), "%"))
+
+metric_lookup <- function(df, metric_name) {
+  if (is.null(df)) return(NA_real_)
+  out <- df |>
+    dplyr::filter(metric == metric_name) |>
+    dplyr::pull(value)
+  if (!length(out)) return(NA_real_)
+  suppressWarnings(as.numeric(out[[1]]))
+}
+
+run_table <- function(run_name, suffix) {
+  read_csv_safe(build_path("outputs", "tables", sprintf("m5_%s_%s.csv", run_name, suffix)))
+}
+
+run_summary_row <- function(run_name) {
+  if (is.null(m5_pca_run_summary)) return(NULL)
+  m5_pca_run_summary |>
+    dplyr::filter(run_name == !!run_name)
+}
+
+artifact_status <- tibble::tibble(
+  path = unlist(c(table_paths, plot_paths), use.names = FALSE),
+  exists = file.exists(unlist(c(table_paths, plot_paths), use.names = FALSE))
+)
+
+m2_exact_duplicate_summary <- read_csv_safe(table_paths$m2_exact_duplicate_summary)
+m2_expediente_summary <- read_csv_safe(table_paths$m2_expediente_summary)
+m2_expediente_distribution_raw <- read_csv_safe(table_paths$m2_expediente_distribution_raw)
+m2_expediente_distribution_after_exact_dedup <- read_csv_safe(table_paths$m2_expediente_distribution_after_exact_dedup)
+m3_conflict_report <- read_csv_safe(table_paths$m3_conflict_report)
+m3_conflict_cases <- read_csv_safe(table_paths$m3_conflict_cases)
+m3_variable_consistency_summary <- read_csv_safe(table_paths$m3_variable_consistency_summary)
+m3_validation_summary <- read_csv_safe(table_paths$m3_validation_summary)
+m4_candidate_variable_screening <- read_csv_safe(table_paths$m4_candidate_variable_screening)
+m4_pca_set_screening <- read_csv_safe(table_paths$m4_pca_set_screening)
+m4_vmed_profile <- read_csv_safe(table_paths$m4_vmed_profile)
+m4_temporal_comparability_overview <- read_csv_safe(table_paths$m4_temporal_comparability_overview)
+m4_continuous_correlation_matrix <- read_csv_safe(table_paths$m4_continuous_correlation_matrix)
+m5_pca_run_summary <- read_csv_safe(table_paths$m5_pca_run_summary)
+m5_pca_run_comparison <- read_csv_safe(table_paths$m5_pca_run_comparison)
+m5_road_safety_note <- read_text_safe(table_paths$m5_road_safety_note)
+m6_index_blueprint <- read_csv_safe(table_paths$m6_index_blueprint)
+m6_final_variable_status <- read_csv_safe(table_paths$m6_final_variable_status)
+m6_conceptual_formula_blueprint <- read_csv_safe(table_paths$m6_conceptual_formula_blueprint)
+m6_risk_index_blueprint <- read_text_safe(table_paths$m6_risk_index_blueprint)
+```
+
+```{r artifact-health, results='asis'}
+if (all(artifact_status$exists)) {
+  render_callout(
+    "Fuente del informe",
+    "Este HTML consume solo artefactos ya generados en <code>outputs/tables</code> y <code>outputs/plots</code>. No reejecuta el pipeline M1-M6.",
+    tone = "method"
+  )
+} else {
+  render_callout(
+    "Fuente del informe",
+    "El documento sigue siendo renderizable aunque falten outputs concretos. Cada seccion avisa de forma explicita cuando no puede mostrar una pieza esperada.",
+    tone = "warning"
+  )
+}
+```
+
+# Unidad analitica y calidad estructural del dataset
+
+```{r section-1-notice, results='asis'}
+render_missing_notice(c(
+  table_paths$m2_exact_duplicate_summary,
+  table_paths$m2_expediente_summary,
+  table_paths$m2_expediente_distribution_raw,
+  table_paths$m2_expediente_distribution_after_exact_dedup
+))
+```
+
+```{r section-1-key, results='asis'}
+render_callout(
+  "Idea clave",
+  "<strong>Raw rows != accidentes.</strong> El problema inicial no era solo quitar duplicados exactos. Era separar fila raw, expediente y unidad accidente para no inflar el analisis posterior.",
+  tone = "key"
+)
+```
+
+```{r section-1-cards, results='asis'}
+render_metric_cards(
+  labels = c("Filas raw", "Duplicados exactos", "Tras deduplicacion exacta", "Expedientes unicos"),
+  values = c(
+    fmt_int(metric_lookup(m2_exact_duplicate_summary, "nrow_raw")),
+    fmt_int(metric_lookup(m2_exact_duplicate_summary, "exact_duplicate_rows")),
+    fmt_int(metric_lookup(m2_exact_duplicate_summary, "nrow_after_exact_dedup")),
+    fmt_int(metric_lookup(m2_expediente_summary, "unique_expedientes"))
+  ),
+  subtitles = c("CSV original", "Duplicado exacto real", "Base estructural mas limpia", "Unidad correcta para consolidar")
+)
+```
+
+```{r section-1-multiplicity}
+if (!is.null(m2_expediente_distribution_raw) && !is.null(m2_expediente_distribution_after_exact_dedup)) {
+  multiplicity_plot <- dplyr::bind_rows(
+    m2_expediente_distribution_raw,
+    m2_expediente_distribution_after_exact_dedup
+  ) |>
+    dplyr::mutate(
+      source = dplyr::recode(source, raw = "Raw", after_exact_dedup = "Tras deduplicacion exacta"),
+      bucket = dplyr::case_when(rows_per_expediente >= 7 ~ "7+", TRUE ~ as.character(rows_per_expediente)),
+      bucket = factor(bucket, levels = c(as.character(1:6), "7+"))
+    ) |>
+    dplyr::group_by(source, bucket) |>
+    dplyr::summarise(expediente_count = sum(expediente_count), .groups = "drop")
+
+  ggplot2::ggplot(multiplicity_plot, ggplot2::aes(bucket, expediente_count, fill = source)) +
+    ggplot2::geom_col(position = "dodge", width = 0.72) +
+    ggplot2::scale_y_continuous(labels = scales::label_comma(big.mark = ".", decimal.mark = ",")) +
+    ggplot2::scale_fill_manual(values = c("Raw" = "#2b6cb0", "Tras deduplicacion exacta" = "#2f855a")) +
+    ggplot2::labs(
+      title = "Filas por expediente antes y despues de deduplicar exactos",
+      x = "Filas por expediente",
+      y = "Numero de expedientes",
+      fill = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 12) +
+    ggplot2::theme(legend.position = "top")
+} else {
+  cat("> No se puede construir el grafico de multiplicidad porque faltan tablas de M2.\n")
+}
+```
+
+```{r section-1-table}
+unit_table <- tibble::tibble(
+  indicador = c(
+    "Expedientes con multiplicidad raw",
+    "Expedientes con multiplicidad tras deduplicacion exacta",
+    "Mediana de filas por expediente",
+    "Maximo de filas por expediente tras deduplicacion"
+  ),
+  valor = c(
+    fmt_int(metric_lookup(m2_expediente_summary, "expedientes_with_raw_multiplicity")),
+    fmt_int(metric_lookup(m2_expediente_summary, "expedientes_with_multiplicity_after_exact_dedup")),
+    fmt_int(metric_lookup(m2_expediente_summary, "median_rows_after_exact_dedup")),
+    fmt_int(metric_lookup(m2_expediente_summary, "max_rows_after_exact_dedup"))
+  )
+)
+
+kable_safe(unit_table, caption = "Evidencia minima para fijar la unidad analitica")
+```
+
+```{r section-1-implication, results='asis'}
+render_callout(
+  "Implicacion para ROAD-SAFETY",
+  "El indice futuro no puede construirse desde conteos raw. El salto correcto es <strong>fila raw -&gt; expediente -&gt; accidente consolidado</strong> y despues screening/PCA.",
+  tone = "implication"
+)
+```
+
+# Construccion de la tabla accidente
+
+```{r section-2-notice, results='asis'}
+render_missing_notice(c(
+  table_paths$m3_conflict_report,
+  table_paths$m3_conflict_cases,
+  table_paths$m3_variable_consistency_summary,
+  table_paths$m3_validation_summary
+))
+```
+
+```{r section-2-key, results='asis'}
+render_callout(
+  "Idea clave",
+  "La tabla accidente se construye con una regla conservadora por expediente: <strong>mismo valor no nulo = se conserva</strong>, <strong>mas de un valor distinto = conflicto</strong>, <strong>solo nulos = NA</strong>. No hay resolucion silenciosa de conflictos.",
+  tone = "key"
+)
+```
+
+```{r section-2-cards, results='asis'}
+render_metric_cards(
+  labels = c("Filas master", "Expedientes duplicados", "Flags de conflicto", "Aptos para PCA inicial"),
+  values = c(
+    fmt_int(metric_lookup(m3_validation_summary, "nrow_tabla_accidente_master")),
+    fmt_int(metric_lookup(m3_validation_summary, "duplicate_num_expediente_rows_master")),
+    fmt_int(metric_lookup(m3_validation_summary, "conflict_flag_columns_n")),
+    fmt_int(metric_lookup(m3_validation_summary, "expedientes_aptos_pca_inicial"))
+  ),
+  subtitles = c("1 expediente = 1 fila", "Debe ser 0", "Trazabilidad por variable", "Antes de filtrar por missing")
+)
+```
+
+```{r section-2-conflicts}
+if (!is.null(m3_conflict_report)) {
+  conflict_plot <- m3_conflict_report |>
+    dplyr::filter(conflict_expedientes > 0) |>
+    dplyr::slice_max(order_by = conflict_expedientes, n = 6) |>
+    dplyr::mutate(variable = stats::reorder(variable, conflict_expedientes))
+
+  ggplot2::ggplot(conflict_plot, ggplot2::aes(variable, conflict_expedientes, fill = variable_role)) +
+    ggplot2::geom_col(width = 0.72) +
+    ggplot2::coord_flip() +
+    ggplot2::scale_y_continuous(labels = scales::label_comma(big.mark = ".", decimal.mark = ",")) +
+    ggplot2::labs(
+      title = "Variables con conflicto intra-expediente",
+      x = NULL,
+      y = "Expedientes con conflicto",
+      fill = NULL
+    ) +
+    ggplot2::theme_minimal(base_size = 12) +
+    ggplot2::theme(legend.position = "top")
+} else {
+  cat("> No se puede construir el grafico de conflictos porque falta `m3_conflict_report.csv`.\n")
+}
+```
+
+```{r section-2-table}
+accident_logic_table <- if (!is.null(m3_variable_consistency_summary)) {
+  m3_variable_consistency_summary |>
+    dplyr::filter(variable %in% c("fecha", "hora", "intensidad", "ocupacion", "vmed", "es_festivo", "is_weekend", "sexo", "rango_edad", "tipo_vehiculo")) |>
+    dplyr::select(variable, variable_role, use_in_master_value, use_in_pca_base, conflict_pct, selection_reason) |>
+    dplyr::mutate(conflict_pct = round(conflict_pct, 2))
+} else {
+  NULL
+}
+
+kable_safe(accident_logic_table, caption = "Accidente/contexto frente a variables de implicado", n = 10)
+```
+
+```{r section-2-cases}
+conflict_cases_table <- if (!is.null(m3_conflict_cases)) {
+  m3_conflict_cases |>
+    dplyr::select(num_expediente, variable, non_null_distinct_n, observed_non_null_values) |>
+    dplyr::slice_head(n = 8)
+} else {
+  NULL
+}
+
+kable_safe(conflict_cases_table, caption = "Ejemplos de expedientes conflictivos", n = 8)
+```
+
+```{r section-2-implication, results='asis'}
+render_callout(
+  "Implicacion para ROAD-SAFETY",
+  "El master ya separa dos capas distintas: <strong>atributos de accidente/contexto</strong> y <strong>variables de implicado</strong>. Esa frontera evita contaminar el PCA y el futuro indice con informacion que no vive en la misma unidad analitica.",
+  tone = "implication"
+)
+```
+
+# Screening de variables para PCA
+
+```{r section-3-notice, results='asis'}
+render_missing_notice(c(
+  table_paths$m4_candidate_variable_screening,
+  table_paths$m4_pca_set_screening,
+  table_paths$m4_vmed_profile,
+  table_paths$m4_temporal_comparability_overview,
+  plot_paths$m4_candidate_missing_pct,
+  plot_paths$m4_pca_set_complete_cases_pct,
+  plot_paths$m4_vmed_distribution,
+  plot_paths$m4_yearly_missing_pct_candidates
+))
+```
+
+```{r section-3-key, results='asis'}
+render_callout(
+  "Idea clave",
+  "El screening no fuerza variables dentro del modelo. Filtra por elegibilidad metodologica desde la tabla accidente: cobertura, variabilidad, retencion de casos y estabilidad temporal basica.",
+  tone = "key"
+)
+```
+
+```{r section-3-cards, results='asis'}
+if (!is.null(m4_pca_set_screening)) {
+  screening_cards <- m4_pca_set_screening |>
+    dplyr::filter(set_name %in% c("main_continuous", "with_vmed", "with_binary_calendar", "full_candidate"))
+
+  render_metric_cards(
+    labels = screening_cards$set_name,
+    values = fmt_pct(screening_cards$complete_cases_pct, digits = 2),
+    subtitles = paste0(fmt_int(screening_cards$complete_cases_n), " casos completos")
+  )
+}
+```
+
+```{r section-3-plots-a, out.width='49%'}
+render_plot_safe(plot_paths$m4_candidate_missing_pct)
+render_plot_safe(plot_paths$m4_pca_set_complete_cases_pct)
+```
+
+```{r section-3-focus}
+screening_focus <- if (!is.null(m4_candidate_variable_screening)) {
+  m4_candidate_variable_screening |>
+    dplyr::filter(variable %in% c("intensidad", "ocupacion", "hour_sin", "hour_cos", "is_weekend", "vmed", "es_festivo")) |>
+    dplyr::select(variable, type, missing_pct, sd, zero_pct, near_zero_variance_flag, recommendation, rationale) |>
+    dplyr::mutate(dplyr::across(c(missing_pct, sd, zero_pct), ~ round(.x, 2)))
+} else {
+  NULL
+}
+
+kable_safe(screening_focus, caption = "Variables candidatas y recomendacion metodologica", n = 7)
+```
+
+```{r section-3-plots-b, out.width='49%'}
+render_plot_safe(plot_paths$m4_vmed_distribution)
+render_plot_safe(plot_paths$m4_yearly_missing_pct_candidates)
+```
+
+```{r section-3-method, results='asis'}
+render_callout(
+  "Decision metodologica",
+  paste(
+    "<strong>Baseline:</strong> intensidad, ocupacion, hour_sin y hour_cos.",
+    "<strong>Sensibilidad:</strong> is_weekend.",
+    "<strong>Bajo revision:</strong> vmed.",
+    "<strong>Fuera del baseline PCA:</strong> es_festivo no sale por irrelevancia, sino porque es una variable binaria muy desbalanceada y con poca variabilidad efectiva para estructurar el espacio principal del PCA exploratorio. Puede seguir teniendo interes como modulador o contraste contextual fuera del nucleo baseline.",
+    sep = "<br>"
+  ),
+  tone = "method"
+)
+```
+
+```{r section-3-implication, results='asis'}
+render_callout(
+  "Implicacion para ROAD-SAFETY",
+  "M4 deja un nucleo baseline continuo y legible. Tambien deja dos cautelas claras: <strong>vmed</strong> solo entra en sensibilidad y <strong>es_festivo</strong> se reserva como contraste contextual, no como eje principal del espacio PCA.",
+  tone = "implication"
+)
+```
+
+# PCA exploratorio y comparacion de corridas
+
+```{r section-4-notice, results='asis'}
+render_missing_notice(c(
+  table_paths$m5_pca_run_summary,
+  table_paths$m5_pca_run_comparison,
+  plot_paths$m5_baseline_recent_scree_plot,
+  plot_paths$m5_baseline_full_period_scree_plot,
+  plot_paths$m5_with_vmed_recent_scree_plot,
+  plot_paths$m5_with_weekend_recent_scree_plot
+))
+```
+
+```{r section-4-key, results='asis'}
+render_callout(
+  "Idea clave",
+  "El PCA se usa aqui como <strong>detector de redundancias y bloques latentes</strong>. No se interpreta como causalidad, no se lee como score final de riesgo y no se traduce en pesos finales del indice.",
+  tone = "key"
+)
+```
+
+```{r section-4-cards, results='asis'}
+if (!is.null(m5_pca_run_summary)) {
+  render_metric_cards(
+    labels = m5_pca_run_summary$run_name,
+    values = fmt_pct(m5_pca_run_summary$cumulative_variance_pc1_pc2, digits = 2),
+    subtitles = paste0(fmt_int(m5_pca_run_summary$n_used), " casos usados")
+  )
+}
+```
+
+```{r section-4-summary}
+pca_summary_table <- if (!is.null(m5_pca_run_summary)) {
+  m5_pca_run_summary |>
+    dplyr::transmute(
+      run_name,
+      period_used,
+      n_used = fmt_int(n_used),
+      pc1 = round(variance_pc1, 2),
+      pc2 = round(variance_pc2, 2),
+      pc1_pc2 = round(cumulative_variance_pc1_pc2, 2)
+    )
+} else {
+  NULL
+}
+
+kable_safe(pca_summary_table, caption = "Resumen compacto de corridas PCA")
+```
+
+## Corridas {.tabset .tabset-pills}
+
+### baseline_recent
+
+```{r br-callout, results='asis'}
+render_callout(
+  "Hallazgo principal",
+  "Corrida baseline preferente sobre <strong>2020-2024</strong>. El plano principal ya separa un bloque trafico-contexto y un bloque temporal sin meter variables bajo revision.",
+  tone = "method"
+)
+```
+
+```{r br-plots, out.width='32%'}
+render_plot_safe(plot_paths$m5_baseline_recent_scree_plot)
+render_plot_safe(plot_paths$m5_baseline_recent_correlation_circle)
+render_plot_safe(plot_paths$m5_baseline_recent_biplot)
+```
+
+```{r br-tables}
+kable_safe(run_table("baseline_recent", "eigenvalues"), caption = "baseline_recent - eigenvalues", n = 4, digits = 3)
+kable_safe(run_table("baseline_recent", "loadings"), caption = "baseline_recent - loadings PC1-PC2", n = 4, digits = 3)
+kable_safe(run_table("baseline_recent", "contributions"), caption = "baseline_recent - contributions PC1-PC2", n = 4, digits = 3)
+kable_safe(run_table("baseline_recent", "cos2"), caption = "baseline_recent - cos2 PC1-PC2", n = 4, digits = 3)
+```
+
+### baseline_full_period
+
+```{r bfp-callout, results='asis'}
+render_callout(
+  "Hallazgo principal",
+  "Sensibilidad temporal sobre <strong>2016-2024</strong>. La estructura general se parece bastante a la reciente, pero el informe mantiene 2020-2024 como referencia metodologica mas comparable.",
+  tone = "method"
+)
+```
+
+```{r bfp-plots, out.width='32%'}
+render_plot_safe(plot_paths$m5_baseline_full_period_scree_plot)
+render_plot_safe(plot_paths$m5_baseline_full_period_correlation_circle)
+render_plot_safe(plot_paths$m5_baseline_full_period_biplot)
+```
+
+```{r bfp-tables}
+kable_safe(run_table("baseline_full_period", "eigenvalues"), caption = "baseline_full_period - eigenvalues", n = 4, digits = 3)
+kable_safe(run_table("baseline_full_period", "loadings"), caption = "baseline_full_period - loadings PC1-PC2", n = 4, digits = 3)
+kable_safe(run_table("baseline_full_period", "contributions"), caption = "baseline_full_period - contributions PC1-PC2", n = 4, digits = 3)
+kable_safe(run_table("baseline_full_period", "cos2"), caption = "baseline_full_period - cos2 PC1-PC2", n = 4, digits = 3)
+```
+
+### with_vmed_recent
+
+```{r wvr-callout, results='asis'}
+render_callout(
+  "Hallazgo principal",
+  "Al anadir <strong>vmed</strong> la estructura cambia de forma material. Sirve como prueba de robustez, pero refuerza que no debe entrar en el baseline sin limpieza especifica.",
+  tone = "warning"
+)
+```
+
+```{r wvr-plots, out.width='32%'}
+render_plot_safe(plot_paths$m5_with_vmed_recent_scree_plot)
+render_plot_safe(plot_paths$m5_with_vmed_recent_correlation_circle)
+render_plot_safe(plot_paths$m5_with_vmed_recent_biplot)
+```
+
+```{r wvr-tables}
+kable_safe(run_table("with_vmed_recent", "eigenvalues"), caption = "with_vmed_recent - eigenvalues", n = 5, digits = 3)
+kable_safe(run_table("with_vmed_recent", "loadings"), caption = "with_vmed_recent - loadings PC1-PC2", n = 5, digits = 3)
+kable_safe(run_table("with_vmed_recent", "contributions"), caption = "with_vmed_recent - contributions PC1-PC2", n = 5, digits = 3)
+kable_safe(run_table("with_vmed_recent", "cos2"), caption = "with_vmed_recent - cos2 PC1-PC2", n = 5, digits = 3)
+```
+
+### with_weekend_recent
+
+```{r wwr-callout, results='asis'}
+render_callout(
+  "Hallazgo principal",
+  "Al anadir <strong>is_weekend</strong> el bloque principal apenas se reconfigura. Funciona mejor como modulador o sensibilidad que como pieza del nucleo continuo.",
+  tone = "method"
+)
+```
+
+```{r wwr-plots, out.width='32%'}
+render_plot_safe(plot_paths$m5_with_weekend_recent_scree_plot)
+render_plot_safe(plot_paths$m5_with_weekend_recent_correlation_circle)
+render_plot_safe(plot_paths$m5_with_weekend_recent_biplot)
+```
+
+```{r wwr-tables}
+kable_safe(run_table("with_weekend_recent", "eigenvalues"), caption = "with_weekend_recent - eigenvalues", n = 5, digits = 3)
+kable_safe(run_table("with_weekend_recent", "loadings"), caption = "with_weekend_recent - loadings PC1-PC2", n = 5, digits = 3)
+kable_safe(run_table("with_weekend_recent", "contributions"), caption = "with_weekend_recent - contributions PC1-PC2", n = 5, digits = 3)
+kable_safe(run_table("with_weekend_recent", "cos2"), caption = "with_weekend_recent - cos2 PC1-PC2", n = 5, digits = 3)
+```
+
+```{r section-4-comparison}
+pca_comparison_table <- if (!is.null(m5_pca_run_comparison)) {
+  m5_pca_run_comparison |>
+    dplyr::transmute(
+      pregunta = question,
+      respuesta = answer,
+      evidencia = evidence
+    )
+} else {
+  NULL
+}
+
+kable_safe(pca_comparison_table, caption = "Comparacion final entre corridas")
+```
+
+```{r section-4-implication, results='asis'}
+render_callout(
+  "Implicacion para ROAD-SAFETY",
+  "La lectura conjunta de M5 es estable: <strong>intensidad + ocupacion</strong> forman un bloque compartido, <strong>hour_sin + hour_cos</strong> estructuran el bloque temporal, <strong>vmed</strong> altera materialmente la geometria y <strong>is_weekend</strong> opera mejor como sensibilidad.",
+  tone = "implication"
+)
+```
+
+# Implicaciones para el diseno del indice
+
+```{r section-5-key, results='asis'}
+render_callout(
+  "Idea clave",
+  "El indice preliminar se diseña por <strong>bloques interpretables</strong>, no como suma plana de variables. El PCA solo aporta evidencia para agrupar y evitar doble conteo.",
+  tone = "key"
+)
+```
+
+```{r section-5-cards, results='asis'}
+if (!is.null(m6_final_variable_status)) {
+  status_counts <- m6_final_variable_status |>
+    dplyr::count(status, name = "n") |>
+    dplyr::mutate(
+      note = dplyr::case_when(
+        status == "baseline" ~ "Core baseline",
+        status == "sensitivity" ~ "Solo robustez",
+        status == "under_review" ~ "Requiere limpieza extra",
+        status == "excluded" ~ "Fuera del nucleo PCA",
+        TRUE ~ "Estado metodologico"
+      )
+    )
+
+  render_metric_cards(
+    labels = status_counts$status,
+    values = fmt_int(status_counts$n),
+    subtitles = status_counts$note
+  )
+}
+```
+
+```{r section-5-table}
+variable_status_table <- if (!is.null(m6_final_variable_status)) {
+  m6_final_variable_status |>
+    dplyr::select(variable, status, rationale)
+} else {
+  NULL
+}
+
+kable_safe(variable_status_table, caption = "Estado final de variables para el indice")
+```
+
+```{r section-5-rules, results='asis'}
+render_callout(
+  "Que no conviene sobreponderar junto",
+  paste(
+    "<strong>intensidad + ocupacion</strong>: mismo bloque trafico-contexto.",
+    "<strong>hour_sin + hour_cos</strong>: dos coordenadas de una misma estructura temporal ciclica.",
+    "<strong>intensidad/ocupacion + vmed</strong>: riesgo de duplicar senal de contexto si vmed entra sin control.",
+    sep = "<br>"
+  ),
+  tone = "warning"
+)
+```
+
+```{r section-5-implication, results='asis'}
+render_callout(
+  "Implicacion para el sistema",
+  "El score baseline puede pasar al futuro grafo como logica de bloques. Lo que aun no existe es el <strong>peso operativo de arista</strong>, porque falta el bloque historico-espacial y la agregacion por segmento/franja.",
+  tone = "implication"
+)
+```
+
+# Blueprint final del indice
+
+```{r section-6-notice, results='asis'}
+render_missing_notice(c(
+  table_paths$m6_index_blueprint,
+  table_paths$m6_final_variable_status,
+  table_paths$m6_conceptual_formula_blueprint
+))
+```
+
+```{r section-6-key, results='asis'}
+render_callout(
+  "Idea clave",
+  "El blueprint final deja separadas cuatro capas: <strong>baseline</strong>, <strong>sensitivity</strong>, <strong>under_review</strong> y <strong>excluded</strong>. Eso ordena el indice sin confundirlo todavia con coste de routing.",
+  tone = "key"
+)
+```
+
+```{r section-6-blueprint}
+blueprint_table <- if (!is.null(m6_index_blueprint)) {
+  m6_index_blueprint |>
+    dplyr::select(block_name, role_in_risk_logic, variables_included, reason, suggested_combination_rule)
+} else {
+  NULL
+}
+
+kable_safe(blueprint_table, caption = "Blueprint preliminar del indice por bloques")
+```
+
+```{r section-6-formula}
+formula_table <- if (!is.null(m6_conceptual_formula_blueprint)) {
+  m6_conceptual_formula_blueprint |>
+    dplyr::select(formula_component, conceptual_expression, purpose, current_status)
+} else {
+  NULL
+}
+
+kable_safe(formula_table, caption = "Formula conceptual y estado de implementacion")
+```
+
+```{r section-6-bridge, results='asis'}
+render_callout(
+  "Blueprint != edge weight",
+  "Este documento cierra una arquitectura analitica interpretable. No fija todavia la funcion final de coste para routing. Para eso faltan <strong>map-matching</strong>, <strong>agregacion por segmento</strong>, <strong>exposicion</strong>, <strong>severidad</strong> y una transformacion final a peso operativo de arista.",
+  tone = "method"
+)
+```
+
+# Siguientes pasos
+
+```{r section-7-next, results='asis'}
+render_callout(
+  "Siguiente fase tecnica",
+  paste(
+    "Construir el bloque <strong>historico_espacial</strong> a nivel tramo o arista.",
+    "Agregar evidencia por segmento y franja temporal con ajuste por exposicion.",
+    "Convertir el score conceptual en un <strong>edge weight</strong> calibrable para routing.",
+    sep = "<br>"
+  ),
+  tone = "implication"
+)
+```
+
+El siguiente salto tecnico ya no es mas PCA: es pasar de esta logica de bloques al nivel segmento/arista con evidencia historico-espacial y edge weighting.

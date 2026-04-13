@@ -1,0 +1,18 @@
+variable,variable_role,use_in_master_value,use_in_pca_base,selection_reason,all_na_expedientes,stable_expedientes,conflict_expedientes,conflict_pct,example_conflict_expedientes
+rango_edad,diagnostic_only_entity_level,FALSE,FALSE,"Entity-level field retained only for conflict diagnostics, not as accident-level value.",0,50100,96783,65.89121954208451,2016/1000 | 2016/10001 | 2016/10004 | 2016/1001 | 2016/10014
+tipo_vehiculo,diagnostic_only_entity_level,FALSE,FALSE,"Entity-level field retained only for conflict diagnostics, not as accident-level value.",189,86641,60053,40.88492201275846,2016/1000 | 2016/10004 | 2016/1001 | 2016/10018 | 2016/10019
+sexo,diagnostic_only_entity_level,FALSE,FALSE,"Entity-level field retained only for conflict diagnostics, not as accident-level value.",0,95147,51736,35.222592131152005,2016/1000 | 2016/10003 | 2016/10004 | 2016/10014 | 2016/10016
+coordenada_x_utm,master_accident_level,TRUE,FALSE,Compatible with accident-level consolidation after intra-expediente inspection.,0,146883,0,0,NA
+coordenada_y_utm,master_accident_level,TRUE,FALSE,Compatible with accident-level consolidation after intra-expediente inspection.,0,146883,0,0,NA
+dia_semana,master_accident_level,TRUE,TRUE,Compatible with accident-level consolidation after intra-expediente inspection.,0,146883,0,0,NA
+direccion_unica,master_accident_level,TRUE,FALSE,Compatible with accident-level consolidation after intra-expediente inspection.,0,146883,0,0,NA
+distrito,master_accident_level,TRUE,FALSE,Compatible with accident-level consolidation after intra-expediente inspection.,4,146879,0,0,NA
+es_festivo,master_accident_level,TRUE,TRUE,Compatible with accident-level consolidation after intra-expediente inspection.,0,146883,0,0,NA
+estado_meteorologico,master_accident_level,TRUE,FALSE,Compatible with accident-level consolidation after intra-expediente inspection.,10950,135933,0,0,NA
+fecha,master_accident_level,TRUE,TRUE,Compatible with accident-level consolidation after intra-expediente inspection.,0,146883,0,0,NA
+hora,master_accident_level,TRUE,TRUE,Compatible with accident-level consolidation after intra-expediente inspection.,0,146883,0,0,NA
+id_sensor_cercano,master_accident_level,TRUE,FALSE,Compatible with accident-level consolidation after intra-expediente inspection.,0,146883,0,0,NA
+intensidad,master_accident_level,TRUE,TRUE,Compatible with accident-level consolidation after intra-expediente inspection.,26582,120301,0,0,NA
+ocupacion,master_accident_level,TRUE,TRUE,Compatible with accident-level consolidation after intra-expediente inspection.,26688,120195,0,0,NA
+tipo_accidente,master_accident_level,TRUE,FALSE,Compatible with accident-level consolidation after intra-expediente inspection.,2,146881,0,0,NA
+vmed,master_accident_level,TRUE,TRUE,Compatible with accident-level consolidation after intra-expediente inspection.,29068,117815,0,0,NA

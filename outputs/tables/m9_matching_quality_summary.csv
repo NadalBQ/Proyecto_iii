@@ -1,0 +1,7 @@
+quality_flag,detail,n,pct_over_valid_coordinates,distance_min_m,distance_p50_m,distance_p95_m,distance_max_m,candidate_edges_p50,candidate_edges_p95
+high_confidence,high_confidence,5922,4.04,1.541307752615545e-4,2.6622665965158347,8.235061104409894,9.998465153722996,1,1
+low_confidence,low_confidence,115651,78.81,8.494572025505612e-6,2.255547068501857,14.144675789118082,29.984561347392578,9,28
+medium_confidence,medium_confidence,12992,8.85,6.302715293114891e-4,3.7327251364177525,17.368774977423,19.99278829435419,2,3
+unmatched,invalid_coordinates,136,0.09,NA,NA,NA,NA,NA,NA
+unmatched,no_candidate_within_search_radius,4347,2.96,NA,NA,NA,NA,NA,NA
+unmatched,outside_operational_envelope,7835,5.34,NA,NA,NA,NA,NA,NA

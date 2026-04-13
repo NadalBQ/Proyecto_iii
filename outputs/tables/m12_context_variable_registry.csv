@@ -1,0 +1,11 @@
+variable,layer,status,used_in_dynamic_base,used_in_dynamic_signal_prelim,rationale
+intensidad,dynamic_context,usable_now,TRUE,TRUE,Variable contextual priorizada desde M4-M5 y util para describir carga de trafico del edge/bin.
+ocupacion,dynamic_context,usable_now,TRUE,TRUE,Variable contextual priorizada desde M4-M5 y util para complementar intensidad sin introducir IDs artificiales.
+hour_sin,dynamic_context,descriptor_ready,TRUE,FALSE,"Se conserva como descriptor temporal ciclico ya usable, pero no se convierte todavia en senal numerica de riesgo por si solo."
+hour_cos,dynamic_context,descriptor_ready,TRUE,FALSE,"Se conserva como descriptor temporal ciclico ya usable, pero no se convierte todavia en senal numerica de riesgo por si solo."
+is_weekend,dynamic_context,descriptor_ready,TRUE,FALSE,"Se mantiene como modulador descriptivo y bin de contexto, no como motor principal del signal preliminar."
+vmed,dynamic_context,under_review,FALSE,FALSE,"Se observa de forma diagnostica, pero queda fuera de la base dinamica usable y del signal preliminar por su ruido ya detectado en fases previas."
+es_festivo,dynamic_context,excluded_from_baseline_signal,FALSE,FALSE,No entra en el baseline dinamico porque es binaria muy desbalanceada; puede reentrar despues como modulador contextual.
+estado_meteorologico,dynamic_context,excluded_pending_operational_integration,FALSE,FALSE,No se usa todavia porque falta una integracion operativa y comparable a nivel edge/observacion.
+historical_exposure_adjusted_score_prelim,historical_reference,preserved_separately,TRUE,FALSE,"Se arrastra como referencia historica ya ajustada por exposicion, pero no se pisa ni se mezcla en una unica columna."
+future_combined_edge_risk,future_placeholder,placeholder_only,TRUE,FALSE,Placeholder conceptual para fases posteriores; M12 no calcula todavia la combinacion final.

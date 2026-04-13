@@ -1,0 +1,9 @@
+metric,value
+unique_expedientes,146883
+expedientes_with_raw_multiplicity,112402
+expedientes_with_exact_duplicates,25826
+expedientes_with_multiplicity_after_exact_dedup,104378
+median_rows_raw,2
+median_rows_after_exact_dedup,2
+max_rows_raw,38
+max_rows_after_exact_dedup,13

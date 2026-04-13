@@ -1,0 +1,237 @@
+body {
+  background: linear-gradient(180deg, #f4f7fb 0%, #eef3f7 100%);
+  color: #203040;
+  font-family: "Segoe UI", "Aptos", system-ui, sans-serif;
+  line-height: 1.65;
+}
+
+.main-container {
+  max-width: 1180px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
+  box-shadow: 0 18px 60px rgba(27, 54, 93, 0.08);
+  padding: 2.2rem 2.6rem 3rem;
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+h1.title {
+  font-size: 2.15rem;
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  color: #17324d;
+  margin-bottom: 1rem;
+}
+
+h1, h2, h3, h4 {
+  color: #17324d;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  border-bottom: 1px solid #d9e4ef;
+  padding-bottom: 0.55rem;
+  margin-top: 2.3rem;
+}
+
+h2 {
+  margin-top: 1.8rem;
+  font-size: 1.55rem;
+}
+
+h3 {
+  margin-top: 1.45rem;
+  font-size: 1.2rem;
+}
+
+p, li {
+  font-size: 1rem;
+}
+
+.callout-card {
+  border-radius: 20px;
+  padding: 1rem 1.15rem 1.05rem;
+  margin: 0.8rem 0 1.3rem;
+  border: 1px solid transparent;
+  box-shadow: 0 12px 30px rgba(39, 67, 110, 0.06);
+}
+
+.callout-title {
+  font-weight: 750;
+  margin-bottom: 0.35rem;
+  font-size: 0.96rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.callout-body {
+  font-size: 1rem;
+}
+
+.callout-card.key {
+  background: linear-gradient(135deg, #eef6ff 0%, #f7fbff 100%);
+  border-color: #bfd7f2;
+}
+
+.callout-card.method {
+  background: linear-gradient(135deg, #eefaf6 0%, #f7fcfa 100%);
+  border-color: #b9e1d2;
+}
+
+.callout-card.implication {
+  background: linear-gradient(135deg, #fff7e9 0%, #fffdf8 100%);
+  border-color: #efd6a7;
+}
+
+.callout-card.warning {
+  background: linear-gradient(135deg, #fff1ef 0%, #fff9f8 100%);
+  border-color: #efc0b8;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.95rem;
+  margin: 0.6rem 0 1.5rem;
+}
+
+.metric-card {
+  background: #ffffff;
+  border: 1px solid #d9e4ef;
+  border-radius: 18px;
+  padding: 1rem 1rem 0.95rem;
+  box-shadow: 0 10px 24px rgba(33, 62, 99, 0.05);
+}
+
+.metric-label {
+  color: #516579;
+  font-size: 0.88rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.metric-value {
+  font-size: 1.9rem;
+  font-weight: 760;
+  color: #16314b;
+  margin: 0.28rem 0 0.18rem;
+}
+
+.metric-note {
+  color: #5f7387;
+  font-size: 0.92rem;
+}
+
+img {
+  border-radius: 18px;
+  box-shadow: 0 14px 30px rgba(29, 53, 87, 0.08);
+  background: #ffffff;
+  padding: 0.45rem;
+  margin-bottom: 0.9rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #dce6f0;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(33, 62, 99, 0.05);
+  margin: 0.9rem 0 1.7rem;
+  font-size: 0.94rem;
+}
+
+thead th {
+  background: #edf4fb;
+  color: #17324d;
+  font-weight: 700;
+  border-bottom: 1px solid #d6e2ee;
+}
+
+th, td {
+  padding: 0.72rem 0.82rem;
+  vertical-align: top;
+}
+
+tbody tr:nth-child(even) {
+  background: #f9fbfd;
+}
+
+tbody tr:hover {
+  background: #f2f7fb;
+}
+
+.caption,
+caption {
+  caption-side: top;
+  color: #4f6173;
+  font-weight: 650;
+  margin-bottom: 0.45rem;
+}
+
+.tabset > .nav-tabs {
+  border-bottom: 0;
+  margin-bottom: 1rem;
+  gap: 0.35rem;
+}
+
+.tabset > .nav-tabs > li > a {
+  border: 1px solid #d6e3ee;
+  border-radius: 999px;
+  color: #486076;
+  background: #f6f9fc;
+  font-weight: 650;
+}
+
+.tabset > .nav-tabs > li.active > a,
+.tabset > .nav-tabs > li.active > a:hover,
+.tabset > .nav-tabs > li.active > a:focus {
+  background: #17324d;
+  color: #ffffff;
+  border-color: #17324d;
+}
+
+.tocify {
+  border: 1px solid #d8e2ec;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(33, 62, 99, 0.05);
+}
+
+.tocify .list-group-item {
+  border-radius: 12px;
+  margin: 0.15rem 0.35rem;
+  color: #4d6277;
+}
+
+.tocify .list-group-item.active {
+  background: #17324d;
+  border-color: #17324d;
+  color: #ffffff;
+}
+
+code {
+  color: #b54753;
+  background: #f8eef0;
+  border-radius: 8px;
+  padding: 0.15rem 0.35rem;
+}
+
+pre code {
+  background: transparent;
+  padding: 0;
+}
+
+@media (max-width: 991px) {
+  .main-container {
+    padding: 1.2rem 1rem 2rem;
+    border-radius: 0;
+    margin-top: 0;
+  }
+
+  h1.title {
+    font-size: 1.85rem;
+  }
+}

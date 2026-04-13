@@ -1,0 +1,5 @@
+quality_flag,weight,used_in_raw_count,used_in_weighted_count,rationale,schema_version
+high_confidence,1,TRUE,TRUE,Referencia completa: match sin ambiguedad y con distancia corta.,m10_schema_v1_full_network_weighted_density_prelim_score
+medium_confidence,0.75,TRUE,TRUE,"Conserva la mayor parte de la senal historica, pero descuenta incertidumbre geometrica moderada.",m10_schema_v1_full_network_weighted_density_prelim_score
+low_confidence,0.4,TRUE,TRUE,"Se mantiene para no borrar historia plausible, pero con descuento fuerte porque el edge especifico es mas ambiguo.",m10_schema_v1_full_network_weighted_density_prelim_score
+unmatched,0,FALSE,FALSE,No entra en la agregacion por edge; se reporta aparte como exclusion.,m10_schema_v1_full_network_weighted_density_prelim_score

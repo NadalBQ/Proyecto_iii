@@ -1,0 +1,76 @@
+ranking_type,rank,edge_id,edge_length_m,accident_count_raw,accident_count_high_confidence,accident_count_medium_confidence,accident_count_low_confidence,accident_count_weighted_by_quality,accidents_per_km,historical_score_prelim,first_accident_date,last_accident_date,active_years_n,notes_or_flags
+top_accident_count_raw,1,m8e_dc9535213ca93a52,72.56973134270025,365,365,0,0,365,5029.645,100,2016-01-06,2018-12-28,3,score_capped_at_p95_density
+top_accident_count_raw,2,m8e_e351afef122bc445,14.663178814096195,342,0,0,342,136.8,9329.491,100,2016-01-02,2018-12-14,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_accident_count_raw,3,m8e_6eb1860075a64eab,13.883283827629947,222,0,0,222,88.8,6396.181,100,2016-01-05,2018-12-19,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_accident_count_raw,4,m8e_d964929f387c4d56,4.261767681399991,212,0,0,212,84.8,19897.847,100,2016-01-17,2018-12-25,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_accident_count_raw,5,m8e_dace5c75842c178d,123.06617098372269,177,0,177,0,132.75,1078.688,100,2016-01-04,2018-12-18,3,score_capped_at_p95_density
+top_accident_count_raw,6,m8e_e89c393ebc8f56be,96.61659912828259,115,103,2,10,108.5,1122.995,100,2016-01-15,2024-12-12,9,score_capped_at_p95_density
+top_accident_count_raw,7,m8e_c994bd8a6cd4b643,54.23980035188737,113,0,0,113,45.2,833.336,100,2016-01-04,2024-04-05,5,only_low_confidence_history | score_capped_at_p95_density
+top_accident_count_raw,8,m8e_38a458a19ab0661a,233.63004748642058,112,1,66,45,68.5,293.199,100,2019-02-14,2024-12-14,6,score_capped_at_p95_density
+top_accident_count_raw,9,m8e_12fceb334c4fef41,3.481365727372795,112,0,0,112,44.8,12868.513,100,2016-01-03,2018-12-10,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_accident_count_raw,10,m8e_1f8853acbf32c101,88.58805365552307,106,0,3,103,43.45,490.472,100,2016-01-25,2024-12-19,9,score_capped_at_p95_density
+top_accident_count_raw,11,m8e_5595a6c8bb3ab571,51.22376364357014,106,0,0,106,42.4,827.741,100,2016-02-01,2023-11-26,7,only_low_confidence_history | score_capped_at_p95_density
+top_accident_count_raw,12,m8e_8c860e5e09479af8,72.2912740311481,105,0,0,105,42,580.983,100,2016-01-03,2018-12-29,3,only_low_confidence_history | score_capped_at_p95_density
+top_accident_count_raw,13,m8e_45cb5cc3259356f0,63.918047113857625,103,0,1,102,41.55,650.051,100,2016-01-11,2024-06-06,8,score_capped_at_p95_density
+top_accident_count_raw,14,m8e_4e8f80852204a9c2,75.00030385210918,100,0,67,33,63.45,845.997,100,2019-01-04,2024-12-17,6,score_capped_at_p95_density
+top_accident_count_raw,15,m8e_73eb2f8d9da2683a,211.3215151886786,81,0,16,65,38,179.821,100,2019-08-25,2024-12-02,6,score_capped_at_p95_density
+top_accident_count_raw,16,m8e_5f69818342eba8e9,171.49410156922195,81,0,0,81,32.4,188.928,100,2016-01-22,2024-09-10,8,only_low_confidence_history | score_capped_at_p95_density
+top_accident_count_raw,17,m8e_b13aa43ce37f0645,59.38753917412532,75,0,3,72,31.05,522.837,100,2016-01-01,2021-02-11,5,score_capped_at_p95_density
+top_accident_count_raw,18,m8e_8b1b34e8c7c83bff,10.440478936429628,72,0,0,72,28.8,2758.494,100,2016-01-24,2018-12-02,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_accident_count_raw,19,m8e_f72097e729002886,107.49654332647317,69,0,0,69,27.6,256.752,100,2016-01-03,2024-06-13,4,only_low_confidence_history | score_capped_at_p95_density
+top_accident_count_raw,20,m8e_a1e46996cc5aebfc,120.88206967747698,66,0,10,56,29.9,247.349,100,2019-01-31,2024-12-14,6,score_capped_at_p95_density
+top_accident_count_raw,21,m8e_1c58408ac8d20f8b,135.92355995449282,65,0,11,54,29.85,219.609,100,2019-02-26,2024-10-04,6,score_capped_at_p95_density
+top_accident_count_raw,22,m8e_cad457710a870e3c,45.02779102052988,61,0,54,7,43.3,961.628,100,2016-03-14,2023-10-01,7,score_capped_at_p95_density
+top_accident_count_raw,23,m8e_1659d56842264b78,101.05164124944997,59,51,8,0,57,564.068,100,2016-01-19,2024-10-06,6,score_capped_at_p95_density
+top_accident_count_raw,24,m8e_6857d92e59f72b8b,28.278479805263107,58,0,0,58,23.2,820.412,100,2016-01-19,2018-11-14,3,only_low_confidence_history | score_capped_at_p95_density
+top_accident_count_raw,25,m8e_e2c93f6a022e0cb7,65.01428993523868,58,0,0,58,23.2,356.845,100,2019-01-06,2024-12-21,6,only_low_confidence_history | score_capped_at_p95_density
+top_weighted_historical_count,1,m8e_dc9535213ca93a52,72.56973134270025,365,365,0,0,365,5029.645,100,2016-01-06,2018-12-28,3,score_capped_at_p95_density
+top_weighted_historical_count,2,m8e_e351afef122bc445,14.663178814096195,342,0,0,342,136.8,9329.491,100,2016-01-02,2018-12-14,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_weighted_historical_count,3,m8e_dace5c75842c178d,123.06617098372269,177,0,177,0,132.75,1078.688,100,2016-01-04,2018-12-18,3,score_capped_at_p95_density
+top_weighted_historical_count,4,m8e_e89c393ebc8f56be,96.61659912828259,115,103,2,10,108.5,1122.995,100,2016-01-15,2024-12-12,9,score_capped_at_p95_density
+top_weighted_historical_count,5,m8e_6eb1860075a64eab,13.883283827629947,222,0,0,222,88.8,6396.181,100,2016-01-05,2018-12-19,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_weighted_historical_count,6,m8e_d964929f387c4d56,4.261767681399991,212,0,0,212,84.8,19897.847,100,2016-01-17,2018-12-25,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_weighted_historical_count,7,m8e_38a458a19ab0661a,233.63004748642058,112,1,66,45,68.5,293.199,100,2019-02-14,2024-12-14,6,score_capped_at_p95_density
+top_weighted_historical_count,8,m8e_4e8f80852204a9c2,75.00030385210918,100,0,67,33,63.45,845.997,100,2019-01-04,2024-12-17,6,score_capped_at_p95_density
+top_weighted_historical_count,9,m8e_1659d56842264b78,101.05164124944997,59,51,8,0,57,564.068,100,2016-01-19,2024-10-06,6,score_capped_at_p95_density
+top_weighted_historical_count,10,m8e_c994bd8a6cd4b643,54.23980035188737,113,0,0,113,45.2,833.336,100,2016-01-04,2024-04-05,5,only_low_confidence_history | score_capped_at_p95_density
+top_weighted_historical_count,11,m8e_12fceb334c4fef41,3.481365727372795,112,0,0,112,44.8,12868.513,100,2016-01-03,2018-12-10,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_weighted_historical_count,12,m8e_1f8853acbf32c101,88.58805365552307,106,0,3,103,43.45,490.472,100,2016-01-25,2024-12-19,9,score_capped_at_p95_density
+top_weighted_historical_count,13,m8e_cad457710a870e3c,45.02779102052988,61,0,54,7,43.3,961.628,100,2016-03-14,2023-10-01,7,score_capped_at_p95_density
+top_weighted_historical_count,14,m8e_5671eff2ba2534de,114.80476978189216,46,40,1,5,42.75,372.371,100,2016-01-08,2024-09-07,8,score_capped_at_p95_density
+top_weighted_historical_count,15,m8e_5595a6c8bb3ab571,51.22376364357014,106,0,0,106,42.4,827.741,100,2016-02-01,2023-11-26,7,only_low_confidence_history | score_capped_at_p95_density
+top_weighted_historical_count,16,m8e_8c860e5e09479af8,72.2912740311481,105,0,0,105,42,580.983,100,2016-01-03,2018-12-29,3,only_low_confidence_history | score_capped_at_p95_density
+top_weighted_historical_count,17,m8e_45cb5cc3259356f0,63.918047113857625,103,0,1,102,41.55,650.051,100,2016-01-11,2024-06-06,8,score_capped_at_p95_density
+top_weighted_historical_count,18,m8e_c9bd6b32cdcf78ec,109.3490206005553,53,7,44,2,40.8,373.117,100,2016-01-07,2024-12-10,8,score_capped_at_p95_density
+top_weighted_historical_count,19,m8e_751fe262ac6b1107,74.47919384523348,53,0,50,3,38.7,519.608,100,2016-01-29,2024-06-14,8,score_capped_at_p95_density
+top_weighted_historical_count,20,m8e_73eb2f8d9da2683a,211.3215151886786,81,0,16,65,38,179.821,100,2019-08-25,2024-12-02,6,score_capped_at_p95_density
+top_weighted_historical_count,21,m8e_ba7edbba60d618cb,121.80007221456086,55,0,42,13,36.7,301.313,100,2019-01-05,2024-12-16,5,score_capped_at_p95_density
+top_weighted_historical_count,22,m8e_31c12dd5127b885a,136.17414961940824,50,12,22,16,34.9,256.289,100,2016-01-14,2024-10-20,9,score_capped_at_p95_density
+top_weighted_historical_count,23,m8e_7aa22ba9a33c769c,123.45404748997294,37,29,4,4,33.6,272.166,100,2016-03-14,2024-12-16,6,score_capped_at_p95_density
+top_weighted_historical_count,24,m8e_5f69818342eba8e9,171.49410156922195,81,0,0,81,32.4,188.928,100,2016-01-22,2024-09-10,8,only_low_confidence_history | score_capped_at_p95_density
+top_weighted_historical_count,25,m8e_5bb7a35ff8f0d734,92.6738811833202,54,0,29,25,31.75,342.599,100,2016-06-27,2024-10-08,9,score_capped_at_p95_density
+top_historical_score_prelim,1,m8e_dc9535213ca93a52,72.56973134270025,365,365,0,0,365,5029.645,100,2016-01-06,2018-12-28,3,score_capped_at_p95_density
+top_historical_score_prelim,2,m8e_e351afef122bc445,14.663178814096195,342,0,0,342,136.8,9329.491,100,2016-01-02,2018-12-14,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_historical_score_prelim,3,m8e_dace5c75842c178d,123.06617098372269,177,0,177,0,132.75,1078.688,100,2016-01-04,2018-12-18,3,score_capped_at_p95_density
+top_historical_score_prelim,4,m8e_e89c393ebc8f56be,96.61659912828259,115,103,2,10,108.5,1122.995,100,2016-01-15,2024-12-12,9,score_capped_at_p95_density
+top_historical_score_prelim,5,m8e_6eb1860075a64eab,13.883283827629947,222,0,0,222,88.8,6396.181,100,2016-01-05,2018-12-19,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_historical_score_prelim,6,m8e_d964929f387c4d56,4.261767681399991,212,0,0,212,84.8,19897.847,100,2016-01-17,2018-12-25,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_historical_score_prelim,7,m8e_38a458a19ab0661a,233.63004748642058,112,1,66,45,68.5,293.199,100,2019-02-14,2024-12-14,6,score_capped_at_p95_density
+top_historical_score_prelim,8,m8e_4e8f80852204a9c2,75.00030385210918,100,0,67,33,63.45,845.997,100,2019-01-04,2024-12-17,6,score_capped_at_p95_density
+top_historical_score_prelim,9,m8e_1659d56842264b78,101.05164124944997,59,51,8,0,57,564.068,100,2016-01-19,2024-10-06,6,score_capped_at_p95_density
+top_historical_score_prelim,10,m8e_c994bd8a6cd4b643,54.23980035188737,113,0,0,113,45.2,833.336,100,2016-01-04,2024-04-05,5,only_low_confidence_history | score_capped_at_p95_density
+top_historical_score_prelim,11,m8e_12fceb334c4fef41,3.481365727372795,112,0,0,112,44.8,12868.513,100,2016-01-03,2018-12-10,3,only_low_confidence_history | short_edge_under_25m | score_capped_at_p95_density
+top_historical_score_prelim,12,m8e_1f8853acbf32c101,88.58805365552307,106,0,3,103,43.45,490.472,100,2016-01-25,2024-12-19,9,score_capped_at_p95_density
+top_historical_score_prelim,13,m8e_cad457710a870e3c,45.02779102052988,61,0,54,7,43.3,961.628,100,2016-03-14,2023-10-01,7,score_capped_at_p95_density
+top_historical_score_prelim,14,m8e_5671eff2ba2534de,114.80476978189216,46,40,1,5,42.75,372.371,100,2016-01-08,2024-09-07,8,score_capped_at_p95_density
+top_historical_score_prelim,15,m8e_5595a6c8bb3ab571,51.22376364357014,106,0,0,106,42.4,827.741,100,2016-02-01,2023-11-26,7,only_low_confidence_history | score_capped_at_p95_density
+top_historical_score_prelim,16,m8e_8c860e5e09479af8,72.2912740311481,105,0,0,105,42,580.983,100,2016-01-03,2018-12-29,3,only_low_confidence_history | score_capped_at_p95_density
+top_historical_score_prelim,17,m8e_45cb5cc3259356f0,63.918047113857625,103,0,1,102,41.55,650.051,100,2016-01-11,2024-06-06,8,score_capped_at_p95_density
+top_historical_score_prelim,18,m8e_c9bd6b32cdcf78ec,109.3490206005553,53,7,44,2,40.8,373.117,100,2016-01-07,2024-12-10,8,score_capped_at_p95_density
+top_historical_score_prelim,19,m8e_751fe262ac6b1107,74.47919384523348,53,0,50,3,38.7,519.608,100,2016-01-29,2024-06-14,8,score_capped_at_p95_density
+top_historical_score_prelim,20,m8e_73eb2f8d9da2683a,211.3215151886786,81,0,16,65,38,179.821,100,2019-08-25,2024-12-02,6,score_capped_at_p95_density
+top_historical_score_prelim,21,m8e_ba7edbba60d618cb,121.80007221456086,55,0,42,13,36.7,301.313,100,2019-01-05,2024-12-16,5,score_capped_at_p95_density
+top_historical_score_prelim,22,m8e_31c12dd5127b885a,136.17414961940824,50,12,22,16,34.9,256.289,100,2016-01-14,2024-10-20,9,score_capped_at_p95_density
+top_historical_score_prelim,23,m8e_7aa22ba9a33c769c,123.45404748997294,37,29,4,4,33.6,272.166,100,2016-03-14,2024-12-16,6,score_capped_at_p95_density
+top_historical_score_prelim,24,m8e_5f69818342eba8e9,171.49410156922195,81,0,0,81,32.4,188.928,100,2016-01-22,2024-09-10,8,only_low_confidence_history | score_capped_at_p95_density
+top_historical_score_prelim,25,m8e_5bb7a35ff8f0d734,92.6738811833202,54,0,29,25,31.75,342.599,100,2016-06-27,2024-10-08,9,score_capped_at_p95_density

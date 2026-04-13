@@ -1,0 +1,4 @@
+scenario_name,historical_weight,dynamic_weight,rows_nonmissing_n,score_p50_nonmissing,score_p95_nonmissing,mean_abs_diff_vs_baseline,p95_abs_diff_vs_baseline,edge_rank_shift_p50_vs_baseline,edge_rank_shift_p95_vs_baseline,edge_rank_shift_max_vs_baseline
+baseline_combined_risk_prelim,0.6666666666666666,0.3333333333333333,103556,33.473,86.701,0,0,0,0,0
+historical_heavy_sensitivity,0.8,0.2,103556,28.821,91.334,4.042,10.297,2051,8632,14607
+dynamic_heavy_sensitivity,0.4,0.6,103556,42.076,80.329,8.083,20.594,4212,14338.399999999994,27783

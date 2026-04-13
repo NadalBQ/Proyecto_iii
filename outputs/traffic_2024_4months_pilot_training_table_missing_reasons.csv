@@ -1,0 +1,13 @@
+scope,pilot_row_type,traffic_coverage_flag,traffic_missing_reason,n,pct
+overall,zero,not_covered,edge_has_no_pilot_sensor_support,25092,8.41
+overall,positive,not_covered,edge_has_no_pilot_sensor_support,588,0.2
+overall,zero,covered,covered,262569,87.99
+overall,positive,covered,covered,6334,2.12
+overall,zero,not_covered,pilot_sensor_support_but_no_traffic_for_time,3820,1.28
+overall,positive,not_covered,pilot_sensor_support_but_no_traffic_for_time,13,0
+positive_only,positive,not_covered,edge_has_no_pilot_sensor_support,588,8.48
+positive_only,positive,covered,covered,6334,91.33
+positive_only,positive,not_covered,pilot_sensor_support_but_no_traffic_for_time,13,0.19
+zero_only,zero,not_covered,edge_has_no_pilot_sensor_support,25092,8.61
+zero_only,zero,covered,covered,262569,90.08
+zero_only,zero,not_covered,pilot_sensor_support_but_no_traffic_for_time,3820,1.31

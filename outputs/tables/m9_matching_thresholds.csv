@@ -1,0 +1,7 @@
+threshold_name,value,unit,used_for,why
+search_radius_m,30,m,candidate_search,Initial urban search radius for edge candidates around each accident point.
+high_confidence_distance_max_m,10,m,quality_flag,Very short point-edge distance with no ambiguity.
+medium_confidence_distance_max_m,20,m,quality_flag,Reasonable urban offset still compatible with geocoded accident points.
+medium_confidence_candidate_max,3,count,quality_flag,A small nearby candidate set is still interpretable.
+tie_tolerance_m,1,m,tie_resolution,Candidates within this margin from the minimum distance are treated as a near-tie and penalized in quality.
+output_schema_version,m9_schema_v1_edge_id_projected_point_geometry_binary_match_status,label,output_schema,Final M9 schema version for cache invalidation and auditability.

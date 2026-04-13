@@ -1,0 +1,18 @@
+variable,use_in_master_value,use_in_pca_base,variable_role,selection_reason
+coordenada_x_utm,TRUE,FALSE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+coordenada_y_utm,TRUE,FALSE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+dia_semana,TRUE,TRUE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+direccion_unica,TRUE,FALSE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+distrito,TRUE,FALSE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+es_festivo,TRUE,TRUE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+estado_meteorologico,TRUE,FALSE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+fecha,TRUE,TRUE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+hora,TRUE,TRUE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+id_sensor_cercano,TRUE,FALSE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+intensidad,TRUE,TRUE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+ocupacion,TRUE,TRUE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+rango_edad,FALSE,FALSE,diagnostic_only_entity_level,"Entity-level field retained only for conflict diagnostics, not as accident-level value."
+sexo,FALSE,FALSE,diagnostic_only_entity_level,"Entity-level field retained only for conflict diagnostics, not as accident-level value."
+tipo_accidente,TRUE,FALSE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.
+tipo_vehiculo,FALSE,FALSE,diagnostic_only_entity_level,"Entity-level field retained only for conflict diagnostics, not as accident-level value."
+vmed,TRUE,TRUE,master_accident_level,Compatible with accident-level consolidation after intra-expediente inspection.

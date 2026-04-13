@@ -1,0 +1,64 @@
+column_name,feature_block,temporal_safety_bucket,source_artifact,use_in_next_baseline_candidate,rationale,created_in_this_phase
+edge_accident_count_prior_1y,new_lag_safe_contextual_features,safe_now,lag_from_edge_year_totals,yes,Accident count on the same edge in the immediately previous analysis year. Uses only year y-1 information for the same edge.,yes
+edge_accident_count_prior_2y,new_lag_safe_contextual_features,safe_now,lag_from_edge_year_totals,yes,Accident count on the same edge two analysis years before the current observation. Uses only year y-2 information.,yes
+edge_accident_count_prior_change_1y,new_lag_safe_contextual_features,safe_now,derived_from_edge_year_lags,yes,Difference between prior-1y and prior-2y edge totals. Uses only y-1 and y-2 edge history.,yes
+edge_accident_count_prior_recent_3y,new_lag_safe_contextual_features,safe_now,lag_from_edge_year_totals,yes,"Trailing three-year accident count on the same edge, excluding the current year. Uses only years y-1, y-2 and y-3.",yes
+edge_active_years_prior_recent_3y,new_lag_safe_contextual_features,safe_now,lag_from_edge_year_totals,yes,Number of active accident years in the previous three years on the same edge. Counts only prior years with positive accident totals.,yes
+edge_bin_accident_count_prior_1y,new_lag_safe_contextual_features,safe_now,lag_from_edge_bin_year_totals,yes,Accident count on the same edge/bin/weekend in the immediately previous analysis year. Uses only year y-1 information for the same edge/bin/weekend cell.,yes
+edge_bin_accident_count_prior_2y,new_lag_safe_contextual_features,safe_now,lag_from_edge_bin_year_totals,yes,Accident count on the same edge/bin/weekend two analysis years before the current observation. Uses only year y-2 information.,yes
+edge_bin_accident_count_prior_change_1y,new_lag_safe_contextual_features,safe_now,derived_from_edge_bin_year_lags,yes,Difference between prior-1y and prior-2y edge/bin/weekend totals. Uses only y-1 and y-2 edge/bin/weekend history.,yes
+edge_bin_accident_count_prior_recent_3y,new_lag_safe_contextual_features,safe_now,lag_from_edge_bin_year_totals,yes,"Trailing three-year accident count on the same edge/bin/weekend, excluding the current year. Uses only years y-1, y-2 and y-3 for the same edge/bin/weekend.",yes
+edge_bin_active_years_prior_recent_3y,new_lag_safe_contextual_features,safe_now,lag_from_edge_bin_year_totals,yes,Number of active accident years in the previous three years on the same edge/bin/weekend. Counts only prior years with positive accident totals in the same edge/bin/weekend.,yes
+edge_bin_recent_activity_flag,new_lag_safe_contextual_features,safe_now,derived_from_edge_bin_accident_count_prior_recent_3y,yes,Flag equal to 1 when the edge/bin/weekend cell had at least one accident in the previous three years. Derived only from prior-year edge/bin history.,yes
+edge_bin_share_of_edge_prior_recent_3y,new_lag_safe_contextual_features,safe_now,derived_from_edge_and_edge_bin_recent_3y,yes,Share of the edge recent three-year history concentrated in the same edge/bin/weekend cell. Uses only prior three-year lagged counts.,yes
+edge_bin_years_since_last_accident,new_lag_safe_contextual_features,safe_now,lag_from_edge_bin_year_totals,yes,Years elapsed since the last previous positive accident year on the same edge/bin/weekend. Looks only backward within the same edge/bin/weekend cell.,yes
+edge_years_since_last_accident,new_lag_safe_contextual_features,safe_now,lag_from_edge_year_totals,yes,Years elapsed since the last previous positive accident year on the edge. Looks only backward; stays missing when there is no prior positive year.,yes
+recent_activity_flag,new_lag_safe_contextual_features,safe_now,derived_from_edge_accident_count_prior_recent_3y,yes,Flag equal to 1 when the edge had at least one accident in the previous three years. Derived only from prior-year edge history.,yes
+control_sampling_rule,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+control_support_rule,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+control_template_source_edge_id,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+edge_first_year,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+edge_id,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+edge_last_year,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+is_zero_only_control,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+panel_definition,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+panel_support_first_year,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+panel_support_last_year,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+target_definition,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+zero_generation_rule,admin_or_target,not_applicable,training_table_with_controls,no,Administrative metadata or target/audit column.,no
+analysis_year,original_model_safe,safe_now,training_table_with_controls,yes,Temporal panel index; already safe and used in split.,no
+edge_accident_count_prior_total,original_model_safe,safe_now,training_table_with_controls,yes,Lag-safe cumulative edge count already built from prior years.,no
+edge_bin_accident_count_prior,original_model_safe,safe_now,training_table_with_controls,yes,Lag-safe cumulative edge/bin count already built from prior years.,no
+edge_length_m,original_model_safe,safe_now,training_table_with_controls,yes,Static edge descriptor with full coverage.,no
+hour_cos,original_model_safe,safe_now,training_table_with_controls,yes,Deterministic encoding of the 4h bin center.,no
+hour_sin,original_model_safe,safe_now,training_table_with_controls,yes,Deterministic encoding of the 4h bin center.,no
+is_weekend,original_model_safe,safe_now,training_table_with_controls,yes,Calendar descriptor of the observation unit.,no
+accidents_per_km_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,Could be rebuilt as a rolling prior weighted density by cutoff year.,no
+accidents_per_km_raw_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,Could be rebuilt as a rolling prior density by cutoff year.,no
+context_data_quality_flag_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,"Could be rebuilt as a rolling prior context-quality flag, not from full-period support.",no
+context_observation_n_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,"Could be rebuilt as rolling prior support, not from full-period counts.",no
+context_reference_available,reference_only,unsafe_due_to_leakage,training_table_with_controls,no,Derived from full-period contextual support; leakage-prone.,no
+dynamic_context_signal_prelim_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,"Could be rebuilt as a rolling lagged contextual signal, not from full-period aggregates.",no
+edge_years_observed_prior,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,Needs redefinition because zero-only controls inherit support windows from sampled templates.,no
+exposure_proxy_value_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,"Could be rebuilt as a lagged exposure proxy, but only if sensor/edge evidence is recomputed up to each cutoff.",no
+exposure_quality_flag_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,Could be rebuilt as a lagged exposure-quality flag if the proxy is recomputed by cutoff.,no
+historical_count_raw_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,Could be rebuilt as a rolling prior raw historical count by cutoff year.,no
+historical_count_weighted_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,Could be rebuilt as a rolling prior weighted historical count by cutoff year.,no
+historical_exposure_adjusted_score_prelim_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,Could be rebuilt as a rolling prior score only if M11 logic is recomputed by cutoff.,no
+historical_score_prelim_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,"Could be rebuilt as a rolling prior historical score, not as a full-period column.",no
+intensidad_context_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,"Could be rebuilt as a rolling lagged context proxy, but not used directly now.",no
+ocupacion_context_full_period_reference,reference_only,potentially_rebuildable_as_lagged,training_table_with_controls,no,"Could be rebuilt as a rolling lagged context proxy, but not used directly now.",no
+reference_feature_warning,reference_only,unsafe_due_to_leakage,training_table_with_controls,no,Administrative warning tied to full-period reference columns; not a predictor.,no
+hour_cos_full_period_reference,safe_now_redundant_copy,safe_now,training_table_with_controls,no,Redundant copy of `hour_cos`; safe but not informative.,no
+hour_sin_full_period_reference,safe_now_redundant_copy,safe_now,training_table_with_controls,no,Redundant copy of `hour_sin`; safe but not informative.,no
+edge_length_bin,static_raw_safe_now,safe_now,training_table_with_controls,no,Static raw descriptor; safe but not encoded in the current numeric baseline.,no
+road_class,static_raw_safe_now,safe_now,training_table_with_controls,no,Static categorical road descriptor; safe but not encoded in the first baseline.,no
+sampling_stratum,static_raw_safe_now,safe_now,training_table_with_controls,no,Static raw descriptor; safe but not encoded in the current numeric baseline.,no
+temporal_bin_4h,static_raw_safe_now,safe_now,training_table_with_controls,no,Observation-unit bin label; safe raw panel descriptor.,no
+temporal_bin_center_hour,static_raw_safe_now,safe_now,training_table_with_controls,no,Deterministic raw temporal descriptor.,no
+temporal_bin_end_hour,static_raw_safe_now,safe_now,training_table_with_controls,no,Deterministic raw temporal descriptor.,no
+temporal_bin_start_hour,static_raw_safe_now,safe_now,training_table_with_controls,no,Deterministic raw temporal descriptor.,no
+accident_count,target_or_diagnostic,not_applicable,observed_target_panel,no,Observed target or audit split; not a predictor.,no
+high_confidence_accident_count,target_or_diagnostic,not_applicable,observed_target_panel,no,Observed target or audit split; not a predictor.,no
+low_confidence_accident_count,target_or_diagnostic,not_applicable,observed_target_panel,no,Observed target or audit split; not a predictor.,no
+medium_confidence_accident_count,target_or_diagnostic,not_applicable,observed_target_panel,no,Observed target or audit split; not a predictor.,no

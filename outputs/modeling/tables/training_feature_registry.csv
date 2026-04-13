@@ -1,0 +1,22 @@
+column_name,feature_group,status,source_artifact,rationale
+accident_count,target,target,m9_matches,Real observed target aggregated from matched accidents at panel level.
+high_confidence_accident_count,target_diagnostic,diagnostic_only,m9_matches,"Quality split for target auditability, not primary target."
+medium_confidence_accident_count,target_diagnostic,diagnostic_only,m9_matches,"Quality split for target auditability, not primary target."
+low_confidence_accident_count,target_diagnostic,diagnostic_only,m9_matches,"Quality split for target auditability, not primary target."
+edge_length_m,historical_base,model_safe,m8_edges,Static edge descriptor with full coverage.
+analysis_year,temporal_panel,model_safe,m9_matches_panel,Temporal panel index for defendable split.
+hour_sin,temporal_context,model_safe,panel_grid,Exogenous cyclical encoding of the 4h bin center.
+hour_cos,temporal_context,model_safe,panel_grid,Exogenous cyclical encoding of the 4h bin center.
+is_weekend,temporal_context,model_safe,panel_grid,Calendar indicator defined by observation unit.
+edge_accident_count_prior_total,historical_base,model_safe,lag_from_target,Lag-safe cumulative accident count on the edge before the current analysis year.
+edge_bin_accident_count_prior,historical_base,model_safe,lag_from_target,Lag-safe cumulative accident count on the same edge/bin/weekend before the current analysis year.
+edge_years_observed_prior,historical_base,model_safe,panel_grid,Years since the first observed matched accident on the edge.
+historical_score_prelim_full_period_reference,historical_reference,reference_only,m10,Full-period R artifact kept as comparator; leakage-prone for temporal CV.
+historical_exposure_adjusted_score_prelim_full_period_reference,historical_reference,reference_only,m11,Full-period R artifact kept as comparator; leakage-prone for temporal CV.
+exposure_proxy_value_full_period_reference,historical_reference,reference_only,m11,"Exposure proxy from M11 retained as baseline reference, not default model-safe predictor."
+intensidad_context_full_period_reference,dynamic_reference,reference_only,m12,Accident-backed full-period contextual summary; not safe as a direct temporal predictor.
+ocupacion_context_full_period_reference,dynamic_reference,reference_only,m12,Accident-backed full-period contextual summary; not safe as a direct temporal predictor.
+dynamic_context_signal_prelim_full_period_reference,dynamic_reference,reference_only,m12,Full-period contextual comparator from M12; not target and not default model-safe feature.
+vmed,excluded,excluded_for_now,not_loaded,Excluded due to noise already documented in earlier phases.
+es_festivo,excluded,excluded_for_now,not_loaded,Excluded for now from baseline modeling because the current panel does not support it cleanly as a stable predictor.
+estado_meteorologico,excluded,excluded_for_now,not_loaded,Excluded until meteorology is integrated operationally and independently.
