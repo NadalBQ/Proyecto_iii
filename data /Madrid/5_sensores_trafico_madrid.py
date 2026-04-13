@@ -3,7 +3,7 @@ import glob
 import os
 
 # Configuración
-CARPETA_DATOS = "C:\\Users\\arche\\Documents\\Ciencia de Datos\\PROY III\\Datos\\Madrid\\Trafico\\*.csv" 
+CARPETA_DATOS = "C:\\Users\\..." 
 FICHERO_SALIDA = "trafico_madrid_acumulado.csv"
 
 def procesar_incremental():
