@@ -49,16 +49,16 @@ python main.py evaluate --input <csv-or-parquet> --target-column accident_count
 The repo keeps two internal layers behind the public API:
 
 - `src/internal_model/`
-- `pipeline/`
+- `src/internal_pipeline/`
 
 `src/internal_model/` owns the final model artifact and the final
 `parquet -> pkl` training bridge.
 
-`pipeline/` owns the recovered raw-data rebuild flow:
+`src/internal_pipeline/` owns the recovered raw-data rebuild flow:
 
-- `pipeline/upstream_r/`: raw -> upstream CSV intermediates
-- `pipeline/builders/`: upstream CSV intermediates -> final parquet
-- `pipeline/runners/`: internal orchestration and compatibility workspace
+- `src/internal_pipeline/upstream_r/`: raw -> upstream CSV intermediates
+- `src/internal_pipeline/builders/`: upstream CSV intermediates -> final parquet
+- `src/internal_pipeline/runners/`: internal orchestration and compatibility workspace
 
 ## Three distinct flows
 
@@ -87,7 +87,7 @@ If the local network zip is not present, the upstream R stage may download it.
 
 The rebuild uses an internal disposable workspace at:
 
-- `pipeline/.workspace/`
+- `src/internal_pipeline/.workspace/`
 
 The final published output remains:
 
@@ -156,4 +156,4 @@ The architectural goal remains clear separation:
 
 - public API: `main.py` and `src/model.py`
 - internal model layer: `src/internal_model/`
-- internal data pipeline: `pipeline/`
+- internal data pipeline: `src/internal_pipeline/`

@@ -191,7 +191,7 @@ def get_project_root() -> Path:
     override = os.environ.get(PIPELINE_ROOT_ENV_VAR)
     if override:
         return Path(override).expanduser().resolve()
-    return Path(__file__).resolve().parents[2]
+    return Path(__file__).resolve().parents[3]
 
 
 def build_paths(project_root: Path | None = None) -> ProjectPaths:

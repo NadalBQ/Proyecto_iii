@@ -24,7 +24,7 @@ env/
 
 # Local archive
 _archive_local/
-pipeline/.workspace/
+src/internal_pipeline/.workspace/
 
 # Local data staging if added later
 data/

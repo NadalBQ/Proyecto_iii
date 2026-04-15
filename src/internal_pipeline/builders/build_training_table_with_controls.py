@@ -9,16 +9,16 @@ import numpy as np
 import pandas as pd
 
 if __package__ in (None, ""):
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from pipeline.builders.build_training_table import (
+from src.internal_pipeline.builders.build_training_table import (
     TEMPORAL_BIN_HOURS,
     TEMPORAL_BIN_LABELS,
     build_training_table,
     load_inputs,
     validate_inputs,
 )
-from pipeline.builders.config import build_paths
+from src.internal_pipeline.builders.config import build_paths
 
 
 RANDOM_SEED = 20260411

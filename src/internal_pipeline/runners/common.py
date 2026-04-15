@@ -18,7 +18,7 @@ NETWORK_ZIP_RELATIVE_PATH = (
     Path("data") / "external" / "network" / "madrid-latest-free.shp.zip"
 )
 
-WORKSPACE_RELATIVE_PATH = Path("pipeline") / ".workspace"
+WORKSPACE_RELATIVE_PATH = Path("src") / "internal_pipeline" / ".workspace"
 WORKSPACE_RAW_INPUT_RELATIVE_PATH = Path("accidentes_con_trafico_final.csv")
 WORKSPACE_TRAFFIC_INPUT_RELATIVE_PATH = (
     Path("bases de datos") / "estat-transit-temps-real-estado-trafico-tiempo-real.csv"
@@ -36,7 +36,7 @@ PUBLISHED_FINAL_PARQUET_RELATIVE_PATH = (
 
 
 def get_repo_root() -> Path:
-    return Path(__file__).resolve().parents[2]
+    return Path(__file__).resolve().parents[3]
 
 
 def get_workspace_root() -> Path:

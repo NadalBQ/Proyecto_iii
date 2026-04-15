@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from pipeline.runners.common import (
+from src.internal_pipeline.runners.common import (
     ensure_command_available,
     get_repo_root,
     get_workspace_root,
@@ -13,7 +13,7 @@ from pipeline.runners.common import (
 
 
 def get_upstream_runner_path() -> Path:
-    return get_repo_root() / "pipeline" / "upstream_r" / "run_global_upstream_min.R"
+    return get_repo_root() / "src" / "internal_pipeline" / "upstream_r" / "run_global_upstream_min.R"
 
 
 def validate_upstream_outputs(workspace_root: Path) -> None:

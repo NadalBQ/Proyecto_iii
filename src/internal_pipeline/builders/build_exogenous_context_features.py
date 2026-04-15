@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 
 if __package__ in (None, ""):
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from pipeline.builders.config import build_paths
+from src.internal_pipeline.builders.config import build_paths
 
 
 ROAD_CLASS_HIERARCHY = {

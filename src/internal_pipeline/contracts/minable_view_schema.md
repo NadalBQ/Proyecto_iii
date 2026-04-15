@@ -6,7 +6,7 @@ The final published parquet is:
 
 The internal builders produce it first at:
 
-- `pipeline/.workspace/outputs/modeling/training_table_with_exogenous_context_features.parquet`
+- `src/internal_pipeline/.workspace/outputs/modeling/training_table_with_exogenous_context_features.parquet`
 
 At minimum, the final parquet must satisfy the schema required by the final
 model artifact:

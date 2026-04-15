@@ -56,7 +56,7 @@ def rebuild_parquet_from_raw(path: Union[str, Path, None] = None, *, force: bool
     Rebuild the final minable parquet from local raw inputs through the single
     internal raw-data pipeline entrypoint.
     """
-    from pipeline.runners.rebuild_from_raw import (
+    from src.internal_pipeline.runners.rebuild_from_raw import (
         rebuild_parquet_from_raw as _rebuild_parquet_from_raw,
     )
 

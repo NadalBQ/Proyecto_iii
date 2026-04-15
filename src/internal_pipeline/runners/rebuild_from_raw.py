@@ -5,13 +5,13 @@ import shutil
 from pathlib import Path
 from typing import Union
 
-from pipeline.runners.build_minable_view import build_minable_view
-from pipeline.runners.common import (
+from src.internal_pipeline.runners.build_minable_view import build_minable_view
+from src.internal_pipeline.runners.common import (
     get_default_published_parquet_path,
     get_workspace_root,
     promote_workspace_parquet,
 )
-from pipeline.runners.run_upstream_r import run_upstream_r
+from src.internal_pipeline.runners.run_upstream_r import run_upstream_r
 
 
 def _resolve_destination(path: Union[str, Path, None] = None) -> Path:

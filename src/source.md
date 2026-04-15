@@ -8,12 +8,12 @@
 ## Internal layer
 
 - `src/internal_model/`
-- `pipeline/`
+- `src/internal_pipeline/`
 
 This package contains the minimal internal training bridge required by the
 active final model.
 
-The raw-data rebuild pipeline lives in `pipeline/` and remains an internal
+The raw-data rebuild pipeline lives in `src/internal_pipeline/` and remains an internal
 implementation detail behind `main.py` and `src/model.py`.
 
 ## Boundary rule

@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from pipeline.runners.common import (
+from src.internal_pipeline.runners.common import (
     get_workspace_final_parquet_path,
     get_workspace_root,
     run_python_module,
@@ -11,11 +11,11 @@ from pipeline.runners.common import (
 
 
 BUILDER_MODULES = [
-    "pipeline.builders.build_training_table",
-    "pipeline.builders.build_training_table_with_controls",
-    "pipeline.builders.build_lag_safe_features",
-    "pipeline.builders.build_contextual_lag_safe_features",
-    "pipeline.builders.build_exogenous_context_features",
+    "src.internal_pipeline.builders.build_training_table",
+    "src.internal_pipeline.builders.build_training_table_with_controls",
+    "src.internal_pipeline.builders.build_lag_safe_features",
+    "src.internal_pipeline.builders.build_contextual_lag_safe_features",
+    "src.internal_pipeline.builders.build_exogenous_context_features",
 ]
 
 

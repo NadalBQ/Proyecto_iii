@@ -9,9 +9,9 @@ import numpy as np
 import pandas as pd
 
 if __package__ in (None, ""):
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 
-from pipeline.builders.config import TEMPORAL_BIN_HOURS, TEMPORAL_BIN_LABELS, build_paths
+from src.internal_pipeline.builders.config import TEMPORAL_BIN_HOURS, TEMPORAL_BIN_LABELS, build_paths
 
 
 QUALITY_FLAG_LEVELS = ("high_confidence", "medium_confidence", "low_confidence")
