@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import pickle
 from pathlib import Path
 import sys
 
@@ -15,6 +16,15 @@ if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from modeling.config import build_paths
+from modeling.final_model_artifact import (
+    A4B4_FEATURE_SOURCES,
+    NEGATIVE_BINOMIAL_B4_ARTIFACT_RELATIVE_PATH,
+    RECENT_FALLBACK_BASELINE,
+    add_a4b4_constant,
+    add_a4b4_features,
+    build_negative_binomial_b4_artifact,
+    get_a4b4_feature_matrix,
+)
 from modeling.train_baseline import (
     OVERDISPERSION_THRESHOLD,
     POISSON_ALPHA,
@@ -34,38 +44,6 @@ from modeling.train_lag_safe_baselines import (
     choose_winner,
     improvement_label,
 )
-
-
-RECENT_DYNAMIC_NEUTRAL_VALUE = 50.0
-RECENT_FALLBACK_BASELINE = "road_class_bin_weekend"
-
-A4B4_FEATURE_SOURCES = {
-    "log_edge_length_m": "edge_length_m",
-    "analysis_year_offset": "analysis_year",
-    "hour_sin": "hour_sin",
-    "hour_cos": "hour_cos",
-    "is_weekend_int": "is_weekend",
-    "log1p_edge_accident_count_prior_total": "edge_accident_count_prior_total",
-    "log1p_edge_bin_accident_count_prior": "edge_bin_accident_count_prior",
-    "log1p_edge_accident_count_prior_recent_3y": "edge_accident_count_prior_recent_3y",
-    "log1p_edge_bin_accident_count_prior_recent_3y": "edge_bin_accident_count_prior_recent_3y",
-    "prior_dynamic_context_signal_recent_3y_imputed": "prior_dynamic_context_signal_recent_3y",
-    "log1p_prior_context_observation_n_recent_3y": "prior_context_observation_n_recent_3y",
-    "prior_dynamic_context_recent_missing_flag": "prior_dynamic_context_signal_recent_3y_missing_flag",
-    "ctx_recent_fallback_edge_bin_weekend": "prior_dynamic_context_signal_recent_3y_fallback_level",
-    "ctx_recent_fallback_edge_bin": "prior_dynamic_context_signal_recent_3y_fallback_level",
-    "ctx_recent_fallback_global_bin_weekend": "prior_dynamic_context_signal_recent_3y_fallback_level",
-    "exog_road_class_is_major_flag": "exog_road_class_is_major_flag",
-    "exog_maxspeed_kph_imputed_by_road_class": "exog_maxspeed_kph_imputed_by_road_class",
-    "exog_maxspeed_missing_flag": "exog_maxspeed_missing_flag",
-    "exog_oneway_code_b_flag": "exog_oneway_code_b_flag",
-    "exog_tunnel_flag": "exog_tunnel_flag",
-    "exog_node_degree_mean": "exog_node_degree_mean",
-    "exog_edge_touches_dead_end_flag": "exog_edge_touches_dead_end_flag",
-    "exog_distance_from_network_centroid_km": "exog_distance_from_network_centroid_km",
-    "exog_temporal_is_night_flag": "exog_temporal_is_night_flag",
-    "exog_temporal_is_weekday_peak_flag": "exog_temporal_is_weekday_peak_flag",
-}
 
 EXOGENOUS_FEATURE_GROUPS = {
     "exog_road_class_is_major_flag": "static road",
@@ -182,36 +160,6 @@ def load_table(paths) -> pd.DataFrame:
     return pd.read_parquet(paths.training_with_exogenous_context_features_parquet)
 
 
-def add_a4b4_features(df: pd.DataFrame) -> pd.DataFrame:
-    result = df.copy()
-    result["log_edge_length_m"] = np.log(result["edge_length_m"])
-    result["analysis_year_offset"] = result["analysis_year"] - min(TRAIN_YEARS)
-    result["is_weekend_int"] = result["is_weekend"].astype(int)
-    result["log1p_edge_accident_count_prior_total"] = np.log1p(result["edge_accident_count_prior_total"])
-    result["log1p_edge_bin_accident_count_prior"] = np.log1p(result["edge_bin_accident_count_prior"])
-    result["log1p_edge_accident_count_prior_recent_3y"] = np.log1p(result["edge_accident_count_prior_recent_3y"])
-    result["log1p_edge_bin_accident_count_prior_recent_3y"] = np.log1p(result["edge_bin_accident_count_prior_recent_3y"])
-
-    result["prior_dynamic_context_signal_recent_3y_imputed"] = pd.to_numeric(
-        result["prior_dynamic_context_signal_recent_3y"], errors="coerce"
-    ).fillna(RECENT_DYNAMIC_NEUTRAL_VALUE)
-    result["log1p_prior_context_observation_n_recent_3y"] = np.log1p(
-        pd.to_numeric(result["prior_context_observation_n_recent_3y"], errors="coerce").fillna(0)
-    )
-    result["prior_dynamic_context_recent_missing_flag"] = (
-        result["prior_dynamic_context_signal_recent_3y_missing_flag"].astype(int)
-    )
-
-    fallback = result["prior_dynamic_context_signal_recent_3y_fallback_level"].fillna("unresolved").astype(str)
-    result["ctx_recent_fallback_edge_bin_weekend"] = (fallback == "edge_bin_weekend").astype(int)
-    result["ctx_recent_fallback_edge_bin"] = (fallback == "edge_bin").astype(int)
-    result["ctx_recent_fallback_global_bin_weekend"] = (fallback == "global_bin_weekend").astype(int)
-
-    for feature in [name for name in A4B4_FEATURE_SOURCES if name.startswith("exog_")]:
-        result[feature] = pd.to_numeric(result[feature], errors="coerce")
-    return result
-
-
 def split_frames(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
     return {
         "train": df.loc[df["analysis_year"].isin(TRAIN_YEARS)].copy(),
@@ -221,12 +169,7 @@ def split_frames(df: pd.DataFrame) -> dict[str, pd.DataFrame]:
 
 
 def get_feature_matrix(df: pd.DataFrame) -> pd.DataFrame:
-    matrix = df[list(A4B4_FEATURE_SOURCES.keys())].copy()
-    matrix = matrix.apply(pd.to_numeric, errors="coerce").astype(float)
-    if matrix.isna().any().any():
-        na_columns = matrix.columns[matrix.isna().any()].tolist()
-        raise ValueError(f"Missing values found in A4/B4 feature matrix: {na_columns}")
-    return matrix
+    return get_a4b4_feature_matrix(df)
 
 
 def fit_poisson(train_df: pd.DataFrame) -> PoissonRegressor:
@@ -238,7 +181,7 @@ def fit_poisson(train_df: pd.DataFrame) -> PoissonRegressor:
 
 
 def add_constant(X: pd.DataFrame) -> pd.DataFrame:
-    return sm.add_constant(X, has_constant="add")
+    return add_a4b4_constant(X)
 
 
 def estimate_alpha_on_sample(train_df: pd.DataFrame) -> float:
@@ -731,8 +674,10 @@ def main() -> None:
     paths = build_paths()
     validate_required_artifacts(paths)
     validate_feature_block(paths)
+    artifact_path = paths.project_root / NEGATIVE_BINOMIAL_B4_ARTIFACT_RELATIVE_PATH
+    artifact_path.parent.mkdir(parents=True, exist_ok=True)
 
-    if paths.a4_b4_comparison_csv.exists() and not args.force:
+    if paths.a4_b4_comparison_csv.exists() and artifact_path.exists() and not args.force:
         print(f"A4/B4 comparison already exists: {paths.a4_b4_comparison_csv}")
         print("Use --force to retrain.")
         return
@@ -743,7 +688,7 @@ def main() -> None:
     ensure_nonempty_splits(split_frames_dict)
 
     poisson_model, poisson_predictions, poisson_metrics = fit_and_score_poisson_a4(split_frames_dict)
-    nb_result, nb_predictions, nb_metrics, nb_fit_method, nb_alpha, _ = fit_and_score_nb_b4(split_frames_dict)
+    nb_result, nb_predictions, nb_metrics, nb_fit_method, nb_alpha, nb_converged = fit_and_score_nb_b4(split_frames_dict)
 
     poisson_coefficients = build_poisson_coefficients(poisson_model)
     nb_coefficients = build_nb_coefficients(nb_result, fit_method=nb_fit_method, alpha=nb_alpha)
@@ -775,6 +720,13 @@ def main() -> None:
         exogenous_effect_summary,
     )
 
+    final_model_artifact = build_negative_binomial_b4_artifact(
+        nb_result,
+        fit_method=nb_fit_method,
+        alpha_estimate=nb_alpha,
+        converged=nb_converged,
+    )
+
     poisson_metrics.to_csv(paths.poisson_a4_metrics_csv, index=False)
     poisson_coefficients.to_csv(paths.poisson_a4_coefficients_csv, index=False)
     poisson_predictions.to_csv(paths.poisson_a4_predictions_csv, index=False)
@@ -785,12 +737,15 @@ def main() -> None:
     paths.a4_b4_note_md.write_text(note, encoding="utf-8")
     family_comparison.to_csv(paths.baseline_a3b3_vs_a4b4_comparison_csv, index=False)
     exogenous_effect_summary.to_csv(paths.exogenous_feature_effect_summary_csv, index=False)
+    with open(artifact_path, "wb") as artifact_file:
+        pickle.dump(final_model_artifact, artifact_file, protocol=pickle.HIGHEST_PROTOCOL)
 
     print(f"Poisson A4 metrics written to: {paths.poisson_a4_metrics_csv}")
     print(poisson_metrics.to_string(index=False))
     print(f"Negative Binomial B4 metrics written to: {paths.negative_binomial_b4_metrics_csv}")
     print(nb_metrics.to_string(index=False))
     print(f"A4/B4 comparison written to: {paths.a4_b4_comparison_csv}")
+    print(f"Negative Binomial B4 artifact written to: {artifact_path}")
 
 
 if __name__ == "__main__":
