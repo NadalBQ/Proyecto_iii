@@ -39,17 +39,21 @@ def run_stage(script_path: Path, force: bool) -> None:
     print(f"[DONE] {script_path.name}")
 
 
-def main() -> None:
-    args = parse_args()
+def run_active_global_model_pipeline(force: bool = False) -> None:
     modeling_dir = Path(__file__).resolve().parent
 
     for script_name in ACTIVE_GLOBAL_SCRIPTS:
         script_path = modeling_dir / script_name
         if not script_path.exists():
             raise FileNotFoundError(f"Missing active global script: {script_path}")
-        run_stage(script_path, force=args.force)
+        run_stage(script_path, force=force)
 
     print("[INFO] Active global modeling pipeline completed.")
+
+
+def main() -> None:
+    args = parse_args()
+    run_active_global_model_pipeline(force=args.force)
 
 
 if __name__ == "__main__":
