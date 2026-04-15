@@ -32,6 +32,31 @@ def save_model(model: Any, path: Union[str, Path]) -> bool:
         return False
 
 
+def train_model(path: Union[str, Path, None] = None, *, force: bool = False) -> Any:
+    """
+    Train or refresh the active final ROAD-SAFETY model through the single
+    internal training entrypoint in `modeling/`.
+
+    If `path` is provided and differs from the default artifact location,
+    the trained artifact is also saved there.
+    """
+    from modeling.train_final_model import train_final_model as _train_final_model
+
+    model, artifact_path = _train_final_model(force=force)
+
+    if path is not None:
+        destination = Path(path)
+        if destination.resolve() != artifact_path.resolve():
+            save_model(model, destination)
+
+    return model
+
+
+def update_model(path: Union[str, Path, None] = None) -> Any:
+    """Force retraining of the active final ROAD-SAFETY model."""
+    return train_model(path=path, force=True)
+
+
 def predict(model: Any, X):
     """
     Predict expected accident counts.
@@ -56,5 +81,4 @@ def evaluate_model(model: Any, X, y_true) -> dict[str, float]:
         "target_mean": float(np.mean(y_true)),
         "predicted_mean": float(np.mean(y_pred)),
     }
-
 
