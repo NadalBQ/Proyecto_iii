@@ -1,40 +1,60 @@
+from __future__ import annotations
+
 import pickle
-from sklearn.metrics import accuracy_score
+from pathlib import Path
+from typing import Any, Union
 
-def train_model():
-    '''Trains a predictive model for risk based on the data available'''
-    pass
+import numpy as np
+from sklearn.metrics import mean_absolute_error, mean_poisson_deviance, mean_squared_error
 
 
-def load_model(path):
-    '''Loads an already trained model from its `path` (including its name and extension)'''
-    M = None
+def load_model(path: Union[str, Path]) -> Any:
+    """Load a serialized ROAD-SAFETY model artifact."""
     try:
         with open(path, "rb") as file:
-            M = pickle.load(file)
-        print("Model loaded successfully.")
-    except (OSError, pickle.PickleError) as e:
-        print(f"Error loading model: {e}")
-    return M
+            return pickle.load(file)
+    except OSError as e:
+        raise RuntimeError(f"Error loading model from '{path}': {e}") from e
+    except pickle.PickleError as e:
+        raise RuntimeError(f"Invalid pickle artifact at '{path}': {e}") from e
 
-def save_model(M, path):
-    '''Saves an already trained model to its `path` (including its name and extension)'''
+
+def save_model(model: Any, path: Union[str, Path]) -> bool:
+    """Save a serialized ROAD-SAFETY model artifact."""
     try:
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "wb") as file:
-            # Use highest protocol for efficiency
-            pickle.dump(M, file, protocol=pickle.HIGHEST_PROTOCOL)
-        print(f"Model saved to '{path}'")
+            pickle.dump(model, file, protocol=pickle.HIGHEST_PROTOCOL)
         return True
     except (OSError, pickle.PickleError) as e:
         print(f"Error saving model: {e}")
-    return False
+        return False
 
 
+def predict(model: Any, X):
+    """
+    Predict expected accident counts.
 
-def test_model(M, X_test, Y_test):
-    '''Tests an already trained model against custom-made test cases to see if it performs well in predicting the real values of risk'''
-    Y_pred = M.predict(X_test)
-    acc = accuracy_score(Y_test, Y_pred)
-    return acc
+    The loaded artifact must expose a `predict(X)` method and `X` must satisfy
+    the input contract expected by the serialized final model artifact.
+    """
+    if not hasattr(model, "predict"):
+        raise TypeError("Loaded model artifact does not expose a predict(X) method.")
+    return model.predict(X)
+
+
+def evaluate_model(model: Any, X, y_true) -> dict[str, float]:
+    """Evaluate a count model with regression/count metrics."""
+    y_pred = np.asarray(predict(model, X), dtype=float)
+    y_true = np.asarray(y_true, dtype=float)
+
+    return {
+        "mean_poisson_deviance": float(mean_poisson_deviance(y_true, y_pred)),
+        "mae": float(mean_absolute_error(y_true, y_pred)),
+        "rmse": float(np.sqrt(mean_squared_error(y_true, y_pred))),
+        "target_mean": float(np.mean(y_true)),
+        "predicted_mean": float(np.mean(y_pred)),
+    }
 
 
