@@ -6,11 +6,10 @@ from pathlib import Path
 import pandas as pd
 
 from src.model import (
-    evaluate_model,
     get_default_model_path,
     load_model,
     predict,
-    rebuild_parquet_from_raw,
+    test_model,
     train_model,
     update_model,
 )
@@ -34,17 +33,6 @@ def parse_args() -> argparse.Namespace:
         help="Force retraining of the active final model from the local final minable view.",
     )
     update_parser.add_argument("--model-path", default=None, help="Optional custom destination for the serialized artifact.")
-
-    rebuild_parser = subparsers.add_parser(
-        "rebuild-parquet-from-raw",
-        help="Rebuild the final minable parquet from local raw data and external inputs.",
-    )
-    rebuild_parser.add_argument("--force", action="store_true", help="Force a full raw rebuild refresh.")
-    rebuild_parser.add_argument(
-        "--parquet-path",
-        default=None,
-        help="Optional custom destination for the rebuilt parquet artifact.",
-    )
 
     predict_parser = subparsers.add_parser("predict", help="Load a trained model and generate predictions.")
     predict_parser.add_argument("--input", required=True, help="Input dataframe path (.csv or .parquet).")
@@ -98,11 +86,6 @@ def main() -> None:
             print(f"[INFO] artifact_path = {Path(args.model_path) if args.model_path else get_default_model_path()}")
             return
 
-        if args.command == "rebuild-parquet-from-raw":
-            parquet_path = rebuild_parquet_from_raw(path=args.parquet_path, force=args.force)
-            print(f"[INFO] rebuilt final minable view = {parquet_path}")
-            return
-
         model = load_model(args.model_path)
         df = load_frame(args.input)
 
@@ -121,7 +104,7 @@ def main() -> None:
             if args.target_column not in df.columns:
                 raise ValueError(f"Target column '{args.target_column}' not found in input frame.")
             X = df.drop(columns=[args.target_column])
-            metrics = evaluate_model(model, X, df[args.target_column])
+            metrics = test_model(model, X, df[args.target_column])
             for key, value in metrics.items():
                 print(f"{key}={value}")
             return

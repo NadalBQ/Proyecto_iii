@@ -24,7 +24,6 @@ env/
 
 # Local archive
 _archive_local/
-src/internal_pipeline/.workspace/
 
 # Local data staging if added later
 data/
@@ -32,5 +31,5 @@ bases de datos/
 models/
 
 # Local heavy model artifacts
-artifacts/*
-!artifacts/.gitkeep
+artifacts/
+outputs/
