@@ -17,19 +17,29 @@ def train_model(X, y):
     return model.fit(disp=False)
 
 
-def save_model(model, relative_path):
-    """Save a fitted model to a relative .pkl path."""
-    path = Path(relative_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("wb") as file:
-        pickle.dump(model, file, protocol=pickle.HIGHEST_PROTOCOL)
+def load_model(path):
+    '''Loads an already trained model from its `path` (including its name and extension)'''
+    M = None
+    try:
+        with open(path, "rb") as file:
+            M = pickle.load(file)
+        print("Model loaded successfully.")
+    except (OSError, pickle.PickleError) as e:
+        print(f"Error loading model: {e}")
+    return M
 
 
-def load_model(relative_path):
-    """Load a fitted model from a relative .pkl path."""
-    path = Path(relative_path)
-    with path.open("rb") as file:
-        return pickle.load(file)
+def save_model(M, path):
+    '''Saves an already trained model to its `path` (including its name and extension)'''
+    try:
+        with open(path, "wb") as file:
+            # Use highest protocol for efficiency
+            pickle.dump(M, file, protocol=pickle.HIGHEST_PROTOCOL)
+        print(f"Model saved to '{path}'")
+        return True
+    except (OSError, pickle.PickleError) as e:
+        print(f"Error saving model: {e}")
+    return False
 
 
 def predict(model, X):
