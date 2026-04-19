@@ -1,115 +1,39 @@
-from __future__ import annotations
-
-import argparse
-from pathlib import Path
-
-import pandas as pd
-
-from src.model import (
-    get_default_model_path,
-    load_model,
-    predict,
-    test_model,
-    train_model,
-    update_model,
-)
+from src.graph import load_graph
+from src.model import load_model, predict, save_model, test_model, train_model
+from src.routing import get_route
+from src.ui import show_map, show_route
+from src.weights import update_edge_weights
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="ROAD-SAFETY main orchestrator for the active final model."
-    )
-    subparsers = parser.add_subparsers(dest="command", required=True)
+def main():
+    # 1. Precargar grafos.
+    # graph = load_graph("madrid")
 
-    train_parser = subparsers.add_parser(
-        "train",
-        help="Train or refresh the active final model from the local final minable view.",
-    )
-    train_parser.add_argument("--force", action="store_true", help="Force a full retraining refresh.")
-    train_parser.add_argument("--model-path", default=None, help="Optional custom destination for the serialized artifact.")
+    # 2. Construir los datos del modelo desde cero.
+    # X_train = ...
+    # y_train = ...
 
-    update_parser = subparsers.add_parser(
-        "update",
-        help="Force retraining of the active final model from the local final minable view.",
-    )
-    update_parser.add_argument("--model-path", default=None, help="Optional custom destination for the serialized artifact.")
+    # 3. Entrenar el modelo final.
+    # model = train_model(X_train, y_train)
 
-    predict_parser = subparsers.add_parser("predict", help="Load a trained model and generate predictions.")
-    predict_parser.add_argument("--input", required=True, help="Input dataframe path (.csv or .parquet).")
-    predict_parser.add_argument("--output", default=None, help="Optional output path (.csv or .parquet).")
-    predict_parser.add_argument("--model-path", default=None, help="Optional serialized artifact path.")
+    # 4. Guardar o cargar el modelo si hace falta.
+    # save_model(model, "artifacts/negative_binomial_b4.pkl")
+    # model = load_model("artifacts/negative_binomial_b4.pkl")
 
-    evaluate_parser = subparsers.add_parser("evaluate", help="Evaluate a trained model on labelled data.")
-    evaluate_parser.add_argument("--input", required=True, help="Input dataframe path (.csv or .parquet).")
-    evaluate_parser.add_argument("--target-column", default="accident_count", help="Observed target column.")
-    evaluate_parser.add_argument("--model-path", default=None, help="Optional serialized artifact path.")
+    # 5. Solicitar input del usuario y preparar datos para predicción.
+    # user_input = ...
+    # X_user = ...
 
-    return parser.parse_args()
+    # 6. Predecir, actualizar pesos y calcular ruta.
+    # risk_scores = predict(model, X_user)
+    # update_edge_weights(graph)
+    # route = get_route(graph, start, end, alpha)
 
-
-def load_frame(path: str | Path) -> pd.DataFrame:
-    path = Path(path)
-    suffix = path.suffix.lower()
-    if suffix == ".csv":
-        return pd.read_csv(path)
-    if suffix == ".parquet":
-        return pd.read_parquet(path)
-    raise ValueError(f"Unsupported input format: {path}")
-
-
-def write_frame(df: pd.DataFrame, path: str | Path) -> None:
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    suffix = path.suffix.lower()
-    if suffix == ".csv":
-        df.to_csv(path, index=False)
-        return
-    if suffix == ".parquet":
-        df.to_parquet(path, index=False)
-        return
-    raise ValueError(f"Unsupported output format: {path}")
-
-
-def main() -> None:
-    args = parse_args()
-
-    try:
-        if args.command == "train":
-            model = train_model(path=args.model_path, force=args.force)
-            print(f"[INFO] trained model_name = {getattr(model, 'model_name', 'unknown')}")
-            print(f"[INFO] artifact_path = {Path(args.model_path) if args.model_path else get_default_model_path()}")
-            return
-
-        if args.command == "update":
-            model = update_model(path=args.model_path)
-            print(f"[INFO] updated model_name = {getattr(model, 'model_name', 'unknown')}")
-            print(f"[INFO] artifact_path = {Path(args.model_path) if args.model_path else get_default_model_path()}")
-            return
-
-        model = load_model(args.model_path)
-        df = load_frame(args.input)
-
-        if args.command == "predict":
-            y_pred = predict(model, df)
-            output = df.copy()
-            output["predicted_accident_count"] = y_pred
-            if args.output:
-                write_frame(output, args.output)
-                print(f"[INFO] predictions written to {args.output}")
-            else:
-                print(output.head().to_string(index=False))
-            return
-
-        if args.command == "evaluate":
-            if args.target_column not in df.columns:
-                raise ValueError(f"Target column '{args.target_column}' not found in input frame.")
-            X = df.drop(columns=[args.target_column])
-            metrics = test_model(model, X, df[args.target_column])
-            for key, value in metrics.items():
-                print(f"{key}={value}")
-            return
-    except Exception as exc:
-        raise SystemExit(f"[ERROR] {exc}") from exc
+    # 7. Testear o mostrar resultados cuando corresponda.
+    # metrics = test_model(model, X_test, y_test)
+    # show_map(lat, lon)
+    # show_route(route, opacity=0.8)
+    return
 
 
 if __name__ == "__main__":
