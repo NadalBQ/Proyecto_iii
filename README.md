@@ -10,11 +10,9 @@
 `src/model.py` expone:
 
 - `build_final_parquet(...)`
+- `build_training_xy(...)`
+- `build_and_train_model(...)`
 - `train_model(X, y)`
-- `save_model(model, relative_path)`
-- `load_model(relative_path)`
-- `predict(model, X)`
-- `test_model(model, X, y)`
 
 ## Dataset final de modelado
 
@@ -36,7 +34,11 @@ Toda la logica activa de `raw -> parquet` queda unificada en:
 
 Desde Python, la llamada publica es:
 
-- `build_final_parquet(accidents_csv_path, output_parquet_path, network_zip_path=None, force=False)`
+- `build_final_parquet(accidents_csv_path, output_parquet_path=None, network_zip_path=None, force=False)`
+
+Version mas directa para construir y entrenar:
+
+- `build_and_train_model(accidents_csv_path, output_parquet_path=None, network_zip_path=None, force=False)`
 
 Inputs locales esperados:
 
@@ -45,12 +47,30 @@ Inputs locales esperados:
 
 Si `Rscript` no esta disponible o falta algun input, `src/model.py` devuelve un error claro.
 
-## Rol de main.py
+## Rol de model.py
 
-`main.py` no contiene logica interna de R ni pasos intermedios de preparacion.
-Solo queda preparado para que luego se escriba el flujo manual del proyecto, conectando:
+`src/model.py` queda reducido a lo imprescindible:
 
-1. materializacion del parquet
-2. entrenamiento o carga del modelo
-3. prediccion
-4. integracion con grafos, pesos y rutas
+1. materializar el parquet con el script de R
+2. convertir el parquet a `X` e `y`
+3. entrenar el modelo
+
+## Comparativa de modelos
+
+La comparativa reproducible entre `Negative Binomial` y `Poisson` vive en:
+
+- `analysis/model.ipynb`
+
+Ese notebook es el artefacto activo para:
+
+1. configurar las rutas locales de entrada
+2. construir o reutilizar el parquet final
+3. aplicar el split temporal `2016-2022 / 2023 / 2024`
+4. entrenar ambos modelos
+5. reportar `mean_poisson_deviance`, `MAE` y `RMSE`
+
+Notas operativas:
+
+- el repo no versiona `data/` ni `outputs/`
+- quien ejecute el notebook debe rellenar `ACCIDENTS_CSV_PATH` y, si hace falta, `NETWORK_ZIP_PATH`
+- en Windows, si arrancas Jupyter desde terminal, usa `py -3 -m jupyter lab` o `py -3 -m notebook`

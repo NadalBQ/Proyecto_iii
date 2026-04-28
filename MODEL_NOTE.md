@@ -1,5 +1,17 @@
 # Nota del Modelo
 
+## Estado actual del repo
+
+`src/model.py` contiene la API minima del modelo final:
+
+- materializar el parquet
+- convertir el parquet a `X` e `y`
+- entrenar el modelo final `Negative Binomial`
+
+La comparativa reproducible entre `Negative Binomial` y `Poisson` vive en `analysis/model.ipynb`.
+Ese notebook usa rutas locales configuradas al inicio y no depende de datos versionados dentro del repo.
+Por eso, las metricas exactas dependen del dataset local usado en cada ejecucion.
+
 ## Que se ha modelado
 
 La tabla activa de modelado es `training_table_with_exogenous_context_features.parquet`.
@@ -18,19 +30,7 @@ La respuesta es un conteo escaso y no negativo, asi que un modelo de conteo es m
 Poisson es el baseline natural para datos de conteo, pero asume que la media condicional y la varianza condicional son de magnitud similar.
 Cuando existe sobredispersion, Negative Binomial es una extension estandar porque relaja la restriccion de varianza propia de Poisson.
 
-En la validacion actual:
-
-- media del target = `0.0411`
-- varianza del target = `0.0525`
-- ratio varianza/media = `1.2753`
-
-Esto sugiere una sobredispersion moderada, lo que apoya el uso de Negative Binomial como modelo final razonable.
-
-## Por que no regresion lineal
-
-La regresion lineal se utilizo solo como baseline debil.
-No es la familia natural para targets de conteo escasos y no negativos, y no incorpora supuestos especificos de datos de conteo.
-Por eso sirve como punto de comparacion, pero no como la familia preferente para el sistema final.
+Si en una ejecucion local la varianza del target supera de forma apreciable a la media, eso apunta a sobredispersion y refuerza el uso de Negative Binomial como modelo final razonable.
 
 ## Por que no quedarse en Poisson
 
@@ -38,7 +38,7 @@ Poisson sigue siendo un baseline importante y se evaluo explicitamente.
 Sin embargo, si los datos presentan sobredispersion, una especificacion puramente Poisson puede ser demasiado restrictiva.
 Negative Binomial mantiene la estructura de modelo de conteo y permite mas flexibilidad en la dispersion.
 
-En los resultados actuales, Negative Binomial mejora ligeramente a Poisson en mean Poisson deviance, lo que es coherente con esa motivacion.
+Cuando la sobredispersion existe pero no es extrema, es normal que Negative Binomial y Poisson rindan de forma parecida, con una ligera ventaja para Negative Binomial en metricas orientadas a conteos.
 
 ## Por que estas metricas
 
@@ -62,33 +62,31 @@ La evaluacion siguio un split temporal estricto:
 
 Esto evita leakage aleatorio entre periodos y es mas coherente con el objetivo de prediccion futura del sistema.
 
-## Resultados actuales
+## Comparativa reproducible en el repo
 
-La comparacion actual se hizo entre:
+La comparativa activa del repo se hace entre:
 
 - `negative_binomial`
 - `poisson`
-- `linear_regression`
 
-### Validation
+El flujo reproducible es:
 
-- Negative Binomial: mean Poisson deviance = `0.225692`, MAE = `0.063397`, RMSE = `0.203093`
-- Poisson: mean Poisson deviance = `0.226390`, MAE = `0.062585`, RMSE = `0.203082`
-- Linear Regression: mean Poisson deviance = `0.298942`, MAE = `0.065167`, RMSE = `0.204344`
+1. configurar rutas locales de entrada en `analysis/model.ipynb`
+2. materializar o reutilizar `training_table_with_exogenous_context_features.parquet`
+3. separar `train (2016-2022)`, `validation (2023)` y `test (2024)`
+4. entrenar `Negative Binomial` y `Poisson`
+5. reportar `mean_poisson_deviance`, `MAE` y `RMSE` en validation y test
 
-### Test
-
-- Negative Binomial: mean Poisson deviance = `0.286206`, MAE = `0.073541`, RMSE = `0.235798`
-- Poisson: mean Poisson deviance = `0.288569`, MAE = `0.072658`, RMSE = `0.235880`
-- Linear Regression: mean Poisson deviance = `0.402903`, MAE = `0.074454`, RMSE = `0.236843`
+Como los datos raw y el parquet generado no estan versionados en el repo, los valores numericos concretos no se fijan aqui como si fueran resultados universales.
+La tabla exacta depende del CSV local configurado al ejecutar el notebook.
 
 ## Interpretacion
 
 Los resultados apoyan tres conclusiones directas:
 
-1. Los modelos de conteo son mas apropiados que la regresion lineal para este problema.
-2. Negative Binomial y Poisson rinden de forma parecida, pero Negative Binomial es ligeramente mejor en la metrica principal orientada a conteos.
-3. La mejora de Negative Binomial sobre Poisson es pequena, lo cual es coherente con que la sobredispersion exista pero no sea extrema.
+1. Los modelos de conteo son mas apropiados que usar una regresion lineal estandar para este problema.
+2. Negative Binomial y Poisson deben compararse con la misma particion temporal y las mismas metricas.
+3. Si la sobredispersion es real, Negative Binomial suele ser una opcion final mas flexible que un Poisson puro.
 
 Esto hace que Negative Binomial sea una eleccion final defendible: sigue siendo interpretable, operativamente simple y ligeramente mas robusto que Poisson bajo el patron de dispersion observado.
 
@@ -104,10 +102,9 @@ Esto hace que Negative Binomial sea una eleccion final defendible: sigue siendo 
 - statsmodels. *NegativeBinomial*. https://www.statsmodels.org/stable/generated/statsmodels.discrete.discrete_model.NegativeBinomial.html
 - statsmodels. *Poisson family*. https://www.statsmodels.org/stable/generated/statsmodels.genmod.families.family.Poisson.html
 - scikit-learn. *mean_poisson_deviance*. https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_poisson_deviance.html
-- scikit-learn. *LinearRegression*. https://sklearn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
 
 ## Version corta para la memoria
 
-Negative Binomial se selecciono porque el target es un conteo escaso y no negativo, y los datos muestran sobredispersion moderada, lo que lo hace mas apropiado que la regresion lineal y ligeramente mas flexible que un modelo puramente Poisson.
-La evaluacion se realizo con un split temporal (2016-2022 train, 2023 validation, 2024 test), usando mean Poisson deviance como metrica principal y MAE/RMSE como metricas complementarias.
-En la comparacion final, Negative Binomial mejoro ligeramente a Poisson y supero claramente a la regresion lineal en mean Poisson deviance.
+Negative Binomial se selecciono porque el target es un conteo escaso y no negativo, y cuando los datos muestran sobredispersion resulta mas flexible que un modelo puramente Poisson.
+La evaluacion se realiza con un split temporal (2016-2022 train, 2023 validation, 2024 test), usando mean Poisson deviance como metrica principal y MAE/RMSE como metricas complementarias.
+La comparacion reproducible con Poisson queda centralizada en `analysis/model.ipynb`, y sus valores exactos dependen del dataset local configurado en esa ejecucion.

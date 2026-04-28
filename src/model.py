@@ -1,25 +1,15 @@
-import pickle
 import shutil
 import subprocess
 from pathlib import Path
 
-import numpy as np
-import pandas as pd
-from sklearn.metrics import mean_absolute_error, mean_poisson_deviance, mean_squared_error
-import statsmodels.api as sm
-
-
-def _resolve_path(path_like):
-    return Path(path_like).expanduser().resolve()
-
-
-def _get_r_entrypoint():
-    return Path(__file__).with_name("build_final_parquet.R").resolve()
+DEFAULT_OUTPUT_PARQUET = Path(
+    "outputs/modeling/training_table_with_exogenous_context_features.parquet"
+)
 
 
 def _find_rscript():
     rscript_path = shutil.which("Rscript")
-    if rscript_path is not None:
+    if rscript_path:
         return rscript_path
 
     common_roots = [Path(r"C:\Program Files\R"), Path(r"C:\Program Files (x86)\R")]
@@ -31,51 +21,32 @@ def _find_rscript():
         if candidates:
             return str(candidates[0])
 
-    return None
-
-
-def _prepare_numeric_frame(X):
-    X = pd.DataFrame(X).copy().astype(float)
-    X = X.replace([np.inf, -np.inf], np.nan).fillna(0.0)
-    constant_columns = [column for column in X.columns if X[column].nunique(dropna=False) <= 1]
-    if constant_columns:
-        X = X.drop(columns=constant_columns)
-    return X
+    raise RuntimeError("Rscript is not available in PATH and no local R installation was found.")
 
 
 def build_final_parquet(
     accidents_csv_path,
-    output_parquet_path,
+    output_parquet_path=None,
     network_zip_path=None,
     force=False,
 ):
-    """Materialize the final training parquet through the single R entrypoint."""
-    accidents_path = _resolve_path(accidents_csv_path)
-    output_path = _resolve_path(output_parquet_path)
+    accidents_path = Path(accidents_csv_path).expanduser().resolve()
+    output_path = Path(output_parquet_path or DEFAULT_OUTPUT_PARQUET).expanduser().resolve()
 
-    missing_inputs = []
     if not accidents_path.exists():
-        missing_inputs.append(str(accidents_path))
+        raise FileNotFoundError(f"Missing CSV file: '{accidents_path}'.")
 
     network_path = None
     if network_zip_path is not None:
-        network_path = _resolve_path(network_zip_path)
+        network_path = Path(network_zip_path).expanduser().resolve()
         if not network_path.exists():
-            missing_inputs.append(str(network_path))
-
-    if missing_inputs:
-        raise FileNotFoundError(f"Missing required inputs for parquet build: {missing_inputs}")
+            raise FileNotFoundError(f"Missing network zip file: '{network_path}'.")
 
     if output_path.exists() and not force:
         return output_path
 
     rscript_path = _find_rscript()
-    if rscript_path is None:
-        raise RuntimeError("Rscript is not available in PATH and no local R installation was found.")
-
-    r_entrypoint = _get_r_entrypoint()
-    if not r_entrypoint.exists():
-        raise RuntimeError(f"Missing R build entrypoint: '{r_entrypoint}'.")
+    r_entrypoint = Path(__file__).with_name("build_final_parquet.R").resolve()
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -108,58 +79,58 @@ def build_final_parquet(
     return output_path
 
 
+def build_training_xy(parquet_path, include_analysis_year=True):
+    import numpy as np
+    import pandas as pd
+
+    parquet_path = Path(parquet_path).expanduser().resolve()
+    table = pd.read_parquet(parquet_path)
+
+    if "accident_count" not in table.columns:
+        raise ValueError("Missing target column: 'accident_count'.")
+
+    y = table["accident_count"].astype(float)
+    X = table.drop(columns=["accident_count", "edge_id"], errors="ignore")
+
+    if not include_analysis_year and "analysis_year" in X.columns:
+        X = X.drop(columns=["analysis_year"])
+
+    categorical_columns = X.select_dtypes(include=["object", "string", "category"]).columns.tolist()
+    if categorical_columns:
+        X = pd.get_dummies(X, columns=categorical_columns, dtype=float)
+
+    X = X.replace([np.inf, -np.inf], np.nan).fillna(0.0).astype(float)
+    constant_columns = [column for column in X.columns if X[column].nunique(dropna=False) <= 1]
+    if constant_columns:
+        X = X.drop(columns=constant_columns)
+
+    return X, y
+
+
+def build_and_train_model(
+    accidents_csv_path,
+    output_parquet_path=None,
+    network_zip_path=None,
+    force=False,
+    include_analysis_year=True,
+):
+    parquet_path = build_final_parquet(
+        accidents_csv_path=accidents_csv_path,
+        output_parquet_path=output_parquet_path,
+        network_zip_path=network_zip_path,
+        force=force,
+    )
+    X, y = build_training_xy(parquet_path, include_analysis_year=include_analysis_year)
+    model = train_model(X, y)
+    return model, parquet_path
+
+
 def train_model(X, y):
-    """Train the final negative binomial model from feature matrix X and target y."""
-    X = _prepare_numeric_frame(X)
-    y = pd.Series(y).copy().astype(float)
+    import pandas as pd
+    import statsmodels.api as sm
+
+    X = pd.DataFrame(X).astype(float)
+    y = pd.Series(y).astype(float)
     X = sm.add_constant(X, has_constant="add")
     model = sm.GLM(y, X, family=sm.families.NegativeBinomial())
     return model.fit()
-
-
-def save_model(model, relative_path):
-    """Save a fitted model to a relative .pkl path."""
-    path = Path(relative_path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("wb") as file:
-        pickle.dump(model, file, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def load_model(relative_path):
-    """Load a fitted model from a relative .pkl path."""
-    path = Path(relative_path)
-    with path.open("rb") as file:
-        return pickle.load(file)
-
-
-def predict(model, X):
-    """Generate predictions for X with a fitted model."""
-    X = pd.DataFrame(X).copy().astype(float)
-    X = X.replace([np.inf, -np.inf], np.nan).fillna(0.0)
-    X = sm.add_constant(X, has_constant="add")
-
-    expected_columns = [column for column in model.model.exog_names if column != "alpha"]
-    missing_columns = [column for column in expected_columns if column != "const" and column not in X.columns]
-    if missing_columns:
-        raise ValueError(f"Missing columns for prediction: {missing_columns}")
-
-    X = X.copy()
-    if "const" in expected_columns and "const" not in X.columns:
-        X["const"] = 1.0
-
-    X = X[expected_columns]
-    y_pred = np.asarray(model.predict(X), dtype=float)
-    return np.nan_to_num(y_pred, nan=1e-9, posinf=1e9, neginf=1e-9)
-
-
-def test_model(model, X, y):
-    """Return simple evaluation metrics for a fitted model on test data."""
-    y = np.asarray(y, dtype=float)
-    y_pred = predict(model, X)
-    y_pred = np.clip(y_pred, 1e-9, None)
-
-    return {
-        "mean_poisson_deviance": float(mean_poisson_deviance(y, y_pred)),
-        "mae": float(mean_absolute_error(y, y_pred)),
-        "rmse": float(np.sqrt(mean_squared_error(y, y_pred))),
-    }
