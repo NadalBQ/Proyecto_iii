@@ -12,7 +12,7 @@ from flask import Flask, render_template, request, jsonify
 
 # IMPORTANTE: Aquí importamos tu lógica desde los otros archivos de tu repo.
 # Como ui.py y routing.py están en la misma carpeta (src), importamos así:
-from .routing import calcular_ruta_optima # <--- Cambia esto por el nombre real de tu función
+# from .routing import calcular_ruta_optima # <--- Cambia esto por el nombre real de tu función
 
 # Inicializamos Flask
 app = Flask(__name__)
@@ -24,6 +24,10 @@ def index():
 
 @app.route('/calcular_ruta', methods=['POST'])
 def interfaz_calcular_ruta():
+    try:
+        from src.service import calcular_ruta_optima
+    except:
+        from service import calcular_ruta_optima
     # 1. Extraemos los inputs del usuario (que vienen desde el navegador)
     datos = request.json
     
@@ -38,7 +42,7 @@ def interfaz_calcular_ruta():
     # 2. Le pasamos estos datos a TU algoritmo (en routing.py o main.py)
     # Tu función debe devolver el diccionario con las coordenadas exactas, tiempos, etc.
     resultado = calcular_ruta_optima(origen_usuario, destino_usuario, riesgo_usuario)
-
+    print("Sending route to the graphical interface")
     # 3. Devolvemos el resultado al mapa para que lo dibuje
     return jsonify(resultado)
 
