@@ -1,3 +1,4 @@
+import pickle
 import shutil
 import subprocess
 from pathlib import Path
@@ -134,3 +135,69 @@ def train_model(X, y):
     X = sm.add_constant(X, has_constant="add")
     model = sm.GLM(y, X, family=sm.families.NegativeBinomial())
     return model.fit()
+
+
+def load_model(path):
+    """Load an already trained model from disk."""
+    try:
+        with open(path, "rb") as file:
+            model = pickle.load(file)
+        print("Model loaded successfully.")
+        return model
+    except (OSError, pickle.PickleError) as e:
+        print(f"Error loading model: {e}")
+        return None
+
+
+def save_model(model, path):
+    """Save an already trained model to disk."""
+    try:
+        with open(path, "wb") as file:
+            pickle.dump(model, file, protocol=pickle.HIGHEST_PROTOCOL)
+        print(f"Model saved to '{path}'")
+        return True
+    except (OSError, pickle.PickleError) as e:
+        print(f"Error saving model: {e}")
+    return False
+
+
+def predict(model, X):
+    """Generate predictions for X with a fitted model."""
+    import numpy as np
+    import pandas as pd
+    import statsmodels.api as sm
+
+    if model is None:
+        raise ValueError("Missing fitted model.")
+
+    X = pd.DataFrame(X).copy()
+    X = sm.add_constant(X, has_constant="add")
+
+    expected_columns = [column for column in model.model.exog_names if column != "alpha"]
+    missing_columns = [column for column in expected_columns if column != "const" and column not in X.columns]
+    if missing_columns:
+        raise ValueError(f"Missing columns for prediction: {missing_columns}")
+
+    X = X.copy()
+    if "const" in expected_columns and "const" not in X.columns:
+        X["const"] = 1.0
+
+    X = X[expected_columns]
+    y_pred = np.asarray(model.predict(X), dtype=float)
+    y_pred = np.nan_to_num(y_pred, nan=1e-9, posinf=1e9, neginf=1e-9)
+    return np.clip(y_pred, 1e-9, None)
+
+
+def test_model(model, X, y):
+    """Return simple evaluation metrics for a fitted model on test data."""
+    import numpy as np
+    from sklearn.metrics import mean_absolute_error, mean_poisson_deviance, mean_squared_error
+
+    y = np.asarray(y, dtype=float)
+    y_pred = predict(model, X)
+
+    return {
+        "mean_poisson_deviance": float(mean_poisson_deviance(y, y_pred)),
+        "mae": float(mean_absolute_error(y, y_pred)),
+        "rmse": float(np.sqrt(mean_squared_error(y, y_pred))),
+    }

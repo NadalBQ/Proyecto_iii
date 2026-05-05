@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeRoute Madrid</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; display: flex; height: 100vh; }
+        #sidebar { width: 320px; padding: 20px; background-color: #f8f9fa; box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 1000; overflow-y: auto;}
+        #map { flex-grow: 1; height: 100%; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;}
+        button:hover { background-color: #0056b3; }
+        .alert { padding: 10px; margin-top: 20px; border-radius: 4px; display: none; }
+        .alert.warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; display: block;}
+        .alert.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block;}
+        #resultados { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc; display: none; }
+        #seccion-recorrido { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc; }
+        #lista-recorrido { list-style-type: none; padding: 0; }
+        #lista-recorrido li { padding: 10px; border-bottom: 1px solid #eee; }
+        #lista-recorrido li:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h2>Buscador de Rutas</h2>
+        <div class="form-group">
+            <label for="origen">Origen (A):</label>
+            <input type="text" id="origen" placeholder="Ej: Puerta del Sol" value="Puerta del Sol">
+        </div>
+        <div class="form-group">
+            <label for="destino">Destino (B):</label>
+            <input type="text" id="destino" placeholder="Ej: Plaza de Castilla" value="Plaza de Castilla">
+        </div>
+        <div class="form-group">
+            <label for="riesgo">Riesgo Máximo (0-10):</label>
+            <input type="number" id="riesgo" min="0" max="10" step="0.1" value="5">
+        </div>
+        <button onclick="buscarRuta()">Encontrar Ruta</button>
+
+        <div id="mensaje-alerta" class="alert"></div>
+
+        <div id="resultados">
+            <h3>Detalles de la ruta:</h3>
+            <p><strong>Tiempo estimado:</strong> <span id="res-tiempo">-</span> min</p>
+            <p><strong>Distancia:</strong> <span id="res-distancia">-</span> km</p>
+        </div>
+
+        <div id="seccion-recorrido" style="display: none;">
+            <h3>Recorrido paso a paso:</h3>
+            <ul id="lista-recorrido"></ul>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Inicializamos el mapa centrado en Madrid
+        const map = L.map('map').setView([40.4168, -3.7038], 13);
+        let polyline = null; // Variable para guardar la ruta dibujada
+        let markerOrigen = null; // Marcador para el origen
+        let markerDestino = null; // Marcador para el destino
+
+        // Añadimos la capa de mapa (OpenStreetMap es gratis y no requiere API Key)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Función para enviar los datos a Flask y pintar la respuesta
+        async function buscarRuta() {
+            const origen = document.getElementById('origen').value;
+            const destino = document.getElementById('destino').value;
+            const riesgo_max = document.getElementById('riesgo').value;
+
+            // Petición a nuestro backend en Flask
+            const response = await fetch('/calcular_ruta', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ origen, destino, riesgo_max })
+            });
+
+            const data = await response.json();
+
+            // 1. Mostrar las alertas y resultados principales
+            const alerta = document.getElementById('mensaje-alerta');
+            alerta.innerText = data.mensaje;
+            alerta.className = data.riesgo_excedido ? 'alert warning' : 'alert success';
+            
+            document.getElementById('resultados').style.display = 'block';
+            document.getElementById('res-tiempo').innerText = data.tiempo;
+            document.getElementById('res-distancia').innerText = data.distancia;
+
+            // 2. Limpiar elementos anteriores si los hubiera (polilínea y marcadores)
+            if (polyline) { map.removeLayer(polyline); }
+            if (markerOrigen) { map.removeLayer(markerOrigen); }
+            if (markerDestino) { map.removeLayer(markerDestino); }
+
+            // 3. Dibujar la nueva ruta en el mapa en VERDE
+            polyline = L.polyline(data.ruta, {
+                color: 'green', 
+                weight: 5,
+                opacity: 0.7
+            }).addTo(map);
+
+            // 4. Colocar los marcadores A y B
+            // Marcador de origen (A) - Círculo Verde con ventana emergente
+            markerOrigen = L.circleMarker(data.coordenadas_origen, {
+                radius: 10,
+                fillColor: "green",
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map).bindPopup("<b>A:</b> " + origen).openPopup();
+
+            // Marcador de destino (B) - Círculo Rojo con ventana emergente
+            markerDestino = L.circleMarker(data.coordenadas_destino, {
+                radius: 10,
+                fillColor: "red",
+                color: "#000",
+                weight: 1,
+                opacity: 1,
+                fillOpacity: 0.8
+            }).addTo(map).bindPopup("<b>B:</b> " + destino);
+
+            // 5. Ajustar el zoom del mapa para que se vea toda la ruta y los marcadores
+            map.fitBounds(polyline.getBounds());
+
+            // 6. Rellenar y mostrar el recorrido paso a paso
+            const seccionRecorrido = document.getElementById('seccion-recorrido');
+            const listaRecorrido = document.getElementById('lista-recorrido');
+            
+            // Limpiar la lista anterior
+            listaRecorrido.innerHTML = "";
+            
+            if (data.tramos && data.tramos.length > 0) {
+                // Iterar sobre los tramos para construir la lista
+                data.tramos.forEach(tramo => {
+                    const itemLista = document.createElement('li');
+                    itemLista.innerText = tramo.instruccion;
+                    listaRecorrido.appendChild(itemLista);
+                });
+                // Mostrar la sección
+                seccionRecorrido.style.display = 'block';
+            } else {
+                seccionRecorrido.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
