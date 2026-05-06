@@ -6,13 +6,15 @@ from urllib.request import urlopen
 from zoneinfo import ZoneInfo
 from difflib import get_close_matches
 
+import numpy as np
+
 try:
     import graph as g
     from routing import dijkstra
     from model import (
         load_model,
         normalize_street_name,
-        risk_scores,
+        predict_counts,
         save_model,
         temporal_bin_from_hour,
         train_final_model,
@@ -23,7 +25,7 @@ except ImportError:
     from src.model import (
         load_model,
         normalize_street_name,
-        risk_scores,
+        predict_counts,
         save_model,
         temporal_bin_from_hour,
         train_final_model,
@@ -171,15 +173,41 @@ def build_edge_features(graph, model, context):
 def score_graph_edges(graph, context):
     model = get_model()
     X, edge_refs = build_edge_features(graph, model, context)
-    riesgos = risk_scores(model, X)
-    return edge_refs, riesgos
+    conteos = predict_counts(model, X)
+    riesgos = _percentile_risks(conteos)
+    return edge_refs, riesgos, _risk_summary(riesgos)
+
+
+def _percentile_risks(values):
+    values = np.asarray(values, dtype=float)
+    values = np.nan_to_num(values, nan=0.0, posinf=0.0, neginf=0.0)
+    if len(values) <= 1:
+        return np.zeros(len(values), dtype=float)
+    if float(np.max(values)) == float(np.min(values)):
+        return np.zeros(len(values), dtype=float)
+
+    order = np.argsort(values, kind="mergesort")
+    ranks = np.empty(len(values), dtype=float)
+    ranks[order] = np.arange(len(values), dtype=float)
+    return ranks / (len(values) - 1) * 10.0
+
+
+def _risk_summary(riesgos):
+    riesgos = np.asarray(riesgos, dtype=float)
+    if len(riesgos) == 0:
+        return {"riesgo_min": 0.0, "riesgo_max": 0.0, "riesgo_medio": 0.0}
+    return {
+        "riesgo_min": round(float(np.min(riesgos)), 2),
+        "riesgo_max": round(float(np.max(riesgos)), 2),
+        "riesgo_medio": round(float(np.mean(riesgos)), 2),
+    }
 
 
 def build_edge_mask(graph, riesgo_max, context=None, edge_scores=None):
     if edge_scores is None:
         edge_scores = score_graph_edges(graph, context or build_request_context())
 
-    edge_refs, riesgos = edge_scores
+    edge_refs, riesgos, _ = edge_scores
     allowed = [[True] * len(graph.adj[u]) for u in range(len(graph.adj))]
     pruned = 0
 
@@ -204,8 +232,8 @@ def _thresholds(riesgo_max):
     riesgo = max(0.0, min(10.0, float(riesgo_max)))
     values = []
     while riesgo < 10:
-        values.append(riesgo)
-        riesgo += 1
+        values.append(round(riesgo, 1))
+        riesgo += 0.5
     values.append(10.0)
     return values
 
@@ -224,6 +252,9 @@ def _error_response(message):
         "tramos": [],
         "aristas_podadas": 0,
         "clima_usado": "se desconoce",
+        "riesgo_min": 0.0,
+        "riesgo_max": 0.0,
+        "riesgo_medio": 0.0,
     }
 
 
@@ -242,11 +273,13 @@ def calcular_ruta_optima(origen, destino, riesgo_max):
         target = g.get_nearest_node(G, lat_d, lon_d)
         riesgo_usuario = max(0.0, min(10.0, float(riesgo_max)))
         edge_scores = None
+        risk_info = {"riesgo_min": 0.0, "riesgo_max": 0.0, "riesgo_medio": 0.0}
 
         for riesgo_actual in _thresholds(riesgo_usuario):
             if riesgo_actual < 10:
                 if edge_scores is None:
                     edge_scores = score_graph_edges(G, context)
+                    risk_info = edge_scores[2]
                 allowed, pruned = build_edge_mask(G, riesgo_actual, edge_scores=edge_scores)
             else:
                 allowed, pruned = None, 0
@@ -259,21 +292,28 @@ def calcular_ruta_optima(origen, destino, riesgo_max):
             route_edges = _route_edges(G, path)
             distancia = sum(edge.length for edge in route_edges) / 1000
             tramos = [{"instruccion": f"Sigue por {edge.name}"} for edge in route_edges]
+            riesgo_excedido = riesgo_actual > riesgo_usuario
+            mensaje = (
+                f"No habia ruta con riesgo {riesgo_usuario:.1f}; se uso {riesgo_actual:.1f}"
+                if riesgo_excedido
+                else "Ruta encontrada"
+            )
 
             return {
                 "status": "ok",
-                "mensaje": "Ruta encontrada",
+                "mensaje": mensaje,
                 "ruta": coords,
                 "tiempo": round(cost / 60, 1),
                 "tiempo_total": cost,
                 "distancia": round(distancia, 2),
                 "riesgo_usado": round(riesgo_actual, 1),
-                "riesgo_excedido": riesgo_actual > riesgo_usuario,
+                "riesgo_excedido": riesgo_excedido,
                 "coordenadas_origen": (lat_o, lon_o),
                 "coordenadas_destino": (lat_d, lon_d),
                 "tramos": tramos,
                 "aristas_podadas": pruned,
                 "clima_usado": context["weather"],
+                **risk_info,
             }
 
         return _error_response("No hay ruta")
