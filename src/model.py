@@ -193,6 +193,17 @@ def _design(preprocessor, X):
     return sm.add_constant(np.asarray(transformed, dtype=float), has_constant="add")
 
 
+def _model_metadata(table):
+    feature_defaults = {column: _safe_median(table[column]) for column in NUMERIC_FEATURES if column in table.columns}
+    street_prior_by_key = {}
+    if "street_key" in table.columns and "street_accident_prior" in table.columns:
+        street_prior_by_key = table.groupby("street_key")["street_accident_prior"].median().astype(float).to_dict()
+    return {
+        "feature_defaults": feature_defaults,
+        "street_prior_by_key": street_prior_by_key,
+    }
+
+
 def train_model(X, y):
     X = pd.DataFrame(X).copy()
     y = pd.Series(y).copy()
@@ -221,6 +232,7 @@ def train_count_model(table, categorical_features=None, numeric_features=None, f
         "result": result,
         "feature_columns": feature_columns,
         "risk_scale_value": max(float(np.percentile(positive, 95)) if len(positive) else 1.0, 1e-9),
+        **_model_metadata(table),
     }
 
 
