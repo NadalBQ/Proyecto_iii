@@ -8,7 +8,7 @@ def main():
 
     origen = input("Origen: ")
     destino = input("Destino: ")
-    riesgo = float(input("Riesgo maximo (0-10): "))
+    riesgo = float(input("Riesgo máximo (0-10): "))
 
     result = calcular_ruta_optima(origen, destino, riesgo)
 

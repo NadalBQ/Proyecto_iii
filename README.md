@@ -1,68 +1,67 @@
 # Proyecto_iii
 
-Desarrollamos una aplicacion que ofrece rutas por carretera desde un punto de origen hasta uno de destino, teniendo en cuenta el riesgo de accidente en cada calle y ofreciendo alternativas tan seguras como especifique el usuario.
+Aplicacion de rutas seguras en Madrid. La app y el modelo siguen separados.
 
-## Metodologia
+## Modelo
 
-Llevamos a cabo analisis previos para desarrollar un modelo de calculo de riesgo por calle basado en factores dinamicos, como hora y dia, y factores estaticos, como distancia, limite de velocidad y caracteristicas de la via.
+Todo lo necesario del modelo esta en:
 
-Con el modelo desarrollado se predicen valores de riesgo de las calles y se pondera el peso de cada una en el grafo de la ciudad segun la importancia del riesgo para el usuario.
+- `src/model.py`
 
-Finalmente, se representa la ruta sobre un mapa y se ofrece al usuario la opcion de elegir origen, destino e importancia del riesgo.
+Ese archivo contiene:
 
-## Componentes principales
+- preparacion del CSV;
+- normalizacion de calle y clima;
+- creacion de variables;
+- construccion de tabla de entrenamiento;
+- entrenamiento de Negative Binomial y Poisson;
+- prediccion;
+- conversion a riesgo `0-10`;
+- guardado, carga y testeo.
 
-- `main.py` contiene el CLI de SafeRoute.
-- `src/ui.py` contiene la interfaz Flask.
-- `src/service.py` conecta la entrada de usuario, el grafo, el modelo y el calculo de ruta.
-- `src/model.py` es el wrapper publico del modelo.
-- `src/build_final_parquet.R` materializa el parquet final desde datos raw.
+El flujo activo de modelo parte del CSV local y se llama desde funciones de Python.
 
-## Superficie publica del modelo
+## Entrenar desde Python
 
-`src/model.py` expone:
+```python
+from src.model import train_final_model, save_model
 
-- `build_final_parquet(...)`
-- `build_training_xy(...)`
-- `build_and_train_model(...)`
-- `train_model(X, y)`
-- `load_model(path)`
-- `save_model(model, path)`
-- `predict(model, X)`
-- `test_model(model, X, y)`
+model, table = train_final_model("accidentes_con_trafico_final.csv", max_streets=1500)
+save_model(model, "models/risk_negative_binomial.pkl")
+```
 
-## Dataset final de modelado
+## Comparacion de modelos
 
-El parquet final sigue siendo:
+La comparacion y analisis no estan en `src`. Estan en:
 
-- `training_table_with_exogenous_context_features.parquet`
+- `analysis/model.ipynb`
 
-Contrato activo:
+El notebook compara:
 
-- target: `accident_count`
-- unidad observacional: `edge_id + analysis_year + temporal_bin_4h + is_weekend`
+- baseline global;
+- Poisson con clima;
+- Negative Binomial sin clima;
+- Negative Binomial con clima.
 
-## Materializacion del parquet
+## Variables usadas
 
-Toda la logica activa de `raw -> parquet` queda unificada en:
+- `temporal_bin_4h`
+- `weather`
+- `lat`
+- `lon`
+- `is_weekend`
+- `is_holiday`
+- `intensidad`
+- `ocupacion`
+- `vmed`
+- `street_accident_prior`
 
-- `src/build_final_parquet.R`
+El target es:
 
-Desde Python, la llamada publica es:
+- `accident_count`
 
-- `build_final_parquet(accidents_csv_path, output_parquet_path=None, network_zip_path=None, force=False)`
+## Archivos locales no versionados
 
-Version directa para construir y entrenar:
-
-- `build_and_train_model(accidents_csv_path, output_parquet_path=None, network_zip_path=None, force=False)`
-
-Inputs locales esperados:
-
-- CSV de accidentes
-- opcionalmente un zip de red OSM para enriquecer el matching y las features exogenas
-
-## Observaciones
-
-Proyecto en desarrollo.
-
-Proyecto llevado a cabo por 6 estudiantes del grado de Ciencia de Datos en la Universidad Politecnica de Valencia.
+- `accidentes_con_trafico_final.csv`
+- `models/`
+- `outputs/`

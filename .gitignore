@@ -1,0 +1,36 @@
+# System / editor
+desktop.ini
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# R / local session files
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rproj
+*.rds
+*.log
+*.tmp
+
+# Local archive
+_archive_local/
+
+# Local data staging if added later
+data/
+bases de datos/
+accidentes_con_trafico_final.csv
+models/
+
+# Local heavy model artifacts
+artifacts/
+outputs/
