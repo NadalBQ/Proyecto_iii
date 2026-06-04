@@ -1,60 +1,55 @@
-# src/graph.py
-
 import osmnx as ox
 
 
 class Edge:
-    def __init__(self, to: int, weight: float, name: str):
+    def __init__(self, to: int, weight: float, name: str, length: float = 0.0):
         self.to = to
         self.weight = weight
-        self.name = name  # 🔥 nombre de la calle
+        self.name = name
+        self.length = length
 
 
 class Graph:
     def __init__(self):
         self.adj = []
         self.coords = []
-        self.edge_names = set()  # 🔥 índice de calles
+        self.edge_names = set()
 
 
 def load_graph(place="Madrid, Spain") -> Graph:
     G_osm = ox.graph_from_place(place, network_type="drive")
     G_osm = ox.add_edge_speeds(G_osm)
     G_osm = ox.add_edge_travel_times(G_osm)
-    # G_osm = ox.simplify_graph(G_osm)
 
     node_to_idx = {node: i for i, node in enumerate(G_osm.nodes)}
     idx_to_node = list(G_osm.nodes)
 
-    n = len(idx_to_node)
-    adj = [[] for _ in range(n)]
-    coords = [None] * n
+    adj = [[] for _ in idx_to_node]
+    coords = [None] * len(idx_to_node)
     edge_names = set()
 
     for node, data in G_osm.nodes(data=True):
-        i = node_to_idx[node]
-        coords[i] = (data["y"], data["x"])
+        coords[node_to_idx[node]] = (data["y"], data["x"])
 
     for u, v, data in G_osm.edges(data=True):
-        u_i = node_to_idx[u]
-        v_i = node_to_idx[v]
-
-        weight = data["travel_time"]
-
-        # 🔥 nombre real
         name = data.get("name", "unknown")
         if isinstance(name, list):
             name = name[0]
 
         edge_names.add(name)
-
-        adj[u_i].append(Edge(v_i, weight, name))
+        adj[node_to_idx[u]].append(
+            Edge(
+                to=node_to_idx[v],
+                weight=float(data.get("travel_time", data.get("length", 1.0))),
+                name=name,
+                length=float(data.get("length", 0.0)),
+            )
+        )
 
     G = Graph()
     G.adj = adj
     G.coords = coords
     G.edge_names = edge_names
-
     return G
 
 

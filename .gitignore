@@ -28,6 +28,7 @@ _archive_local/
 # Local data staging if added later
 data/
 bases de datos/
+accidentes_con_trafico_final.csv
 models/
 
 # Local heavy model artifacts
