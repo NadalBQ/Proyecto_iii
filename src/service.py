@@ -19,7 +19,7 @@ try:
         temporal_bin_from_hour,
         train_final_model,
     )
-except ImportError:
+except:
     import src.graph as g
     from src.routing import dijkstra
     from src.model import (
